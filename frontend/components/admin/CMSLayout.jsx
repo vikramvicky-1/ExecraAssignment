@@ -37,9 +37,19 @@ export default function CMSLayout({ children, title, subtitle, actions, fullHeig
     audioInstance.current = new Audio("/sounds/notification.wav")
   }, [])
 
+  const lastTriggered = useRef(playSoundTrigger)
+  const isFirstMount = useRef(true)
+
   // Play notification sound and show toast when trigger changes
   useEffect(() => {
-    if (playSoundTrigger > 0) {
+    if (isFirstMount.current) {
+      isFirstMount.current = false
+      return
+    }
+
+    if (playSoundTrigger > lastTriggered.current) {
+      lastTriggered.current = playSoundTrigger
+      
       // Show toast
       const newContact = contacts[0]
       if (newContact) {
