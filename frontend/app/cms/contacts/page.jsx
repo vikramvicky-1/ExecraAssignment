@@ -39,19 +39,29 @@ export default function ContactsCMS() {
     audioInstance.current = new Audio("/sounds/notification.wav")
   }, [fetchContacts])
 
-  // Play notification sound when trigger changes
+  // Play notification sound and show toast when trigger changes
   useEffect(() => {
-    if (playSoundTrigger > 0 && audioInstance.current) {
-      audioInstance.current.currentTime = 0
-      const playPromise = audioInstance.current.play()
-      if (playPromise !== undefined) {
-        playPromise.catch(e => {
-          // Ignore AbortError as it's harmless (navigation/re-render interruption)
-          if (e.name !== 'AbortError') {
-            console.error("Audio playback failed:", e)
-            toast.error("Audio blocked! Click anywhere on the page to enable sounds.")
-          }
+    if (playSoundTrigger > 0) {
+      // Show toast
+      const newContact = contacts[0]
+      if (newContact) {
+        toast.success(`New message from ${newContact.name}`, {
+          icon: '📧',
+          duration: 5000
         })
+      }
+
+      if (audioInstance.current) {
+        audioInstance.current.currentTime = 0
+        const playPromise = audioInstance.current.play()
+        if (playPromise !== undefined) {
+          playPromise.catch(e => {
+            if (e.name !== 'AbortError') {
+              console.error("Audio playback failed:", e)
+              toast.error("Audio blocked! Click anywhere on the page to enable sounds.")
+            }
+          })
+        }
       }
     }
   }, [playSoundTrigger])
@@ -166,33 +176,43 @@ export default function ContactsCMS() {
 
           {/* List Content */}
           <div className="flex-1 overflow-y-auto custom-scrollbar">
-            {filteredContacts.map((contact) => (
-              <div 
-                key={contact._id}
-                onClick={() => handleSelect(contact._id)}
-                className={`flex items-start gap-4 p-5 cursor-pointer transition-all border-b border-black/[0.02] relative hover:bg-[#FAF8F4] ${selectedId === contact._id ? 'bg-[#FAF8F4] shadow-inner' : ''} ${!contact.isRead ? 'font-bold' : ''}`}
-              >
-                {!contact.isRead && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#2D5A3D] rounded-r-full" />
-                )}
-                
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${!contact.isRead ? 'bg-[#2D5A3D] text-white' : 'bg-[#FAF8F4] text-[#6B6560]'}`}>
-                  {contact.name.charAt(0).toUpperCase()}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-dm-sans text-sm text-[#1A1814] truncate">{contact.name}</span>
-                    <span className="font-dm-mono text-[9px] text-[#B8B3AC] uppercase tracking-tighter">
-                      {format(new Date(contact.createdAt), 'MMM dd')}
-                    </span>
+            <AnimatePresence initial={false}>
+              {filteredContacts.map((contact) => (
+                <motion.div 
+                  key={contact._id}
+                  layout
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 50, mass: 1 }}
+                  onClick={() => handleSelect(contact._id)}
+                  className={`flex items-start gap-4 p-5 cursor-pointer transition-all border-b border-black/[0.02] relative hover:bg-[#FAF8F4] ${selectedId === contact._id ? 'bg-[#FAF8F4] shadow-inner' : ''} ${!contact.isRead ? 'font-bold' : ''}`}
+                >
+                  {!contact.isRead && (
+                    <motion.div 
+                      layoutId={`unread-bar-${contact._id}`}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#2D5A3D] rounded-r-full" 
+                    />
+                  )}
+                  
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${!contact.isRead ? 'bg-[#2D5A3D] text-white' : 'bg-[#FAF8F4] text-[#6B6560]'}`}>
+                    {contact.name.charAt(0).toUpperCase()}
                   </div>
-                  <p className="font-dm-sans text-xs text-[#6B6560] truncate pr-4">
-                    {contact.message}
-                  </p>
-                </div>
-              </div>
-            ))}
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-dm-sans text-sm text-[#1A1814] truncate">{contact.name}</span>
+                      <span className="font-dm-mono text-[9px] text-[#B8B3AC] uppercase tracking-tighter">
+                        {format(new Date(contact.createdAt), 'MMM dd')}
+                      </span>
+                    </div>
+                    <p className="font-dm-sans text-xs text-[#6B6560] truncate pr-4">
+                      {contact.message}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
 
             {filteredContacts.length === 0 && (
               <div className="flex flex-col items-center justify-center py-20 px-10 text-center opacity-40">
