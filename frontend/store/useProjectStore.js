@@ -1,0 +1,105 @@
+import { create } from "zustand";
+import axios from "axios";
+import { io } from "socket.io-client";
+
+const API_URL = "http://localhost:5000/api/projects";
+const SOCKET_URL = "http://localhost:5000";
+axios.defaults.withCredentials = true;
+
+const socket = io(SOCKET_URL, { withCredentials: true });
+
+const useProjectStore = create((set, get) => {
+  // Helper to sort projects (Featured first, then by date)
+  const sortProjects = (list) => {
+    return [...list].sort((a, b) => {
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      // @ts-ignore
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+  };
+
+  // Socket listeners
+  socket.on("projectCreated", (project) => {
+    set((state) => ({
+      projects: sortProjects([project, ...state.projects]),
+    }));
+  });
+
+  socket.on("projectUpdated", (updatedProject) => {
+    set((state) => {
+      const updatedList = state.projects.map((p) =>
+        p._id === updatedProject._id ? updatedProject : p,
+      );
+      return { projects: sortProjects(updatedList) };
+    });
+  });
+
+  socket.on("projectDeleted", (id) => {
+    set((state) => ({
+      projects: state.projects.filter((p) => p._id !== id),
+    }));
+  });
+
+  return {
+    projects: [],
+    isLoading: false,
+    error: null,
+
+    fetchProjects: async () => {
+      set({ isLoading: true });
+      try {
+        const response = await axios.get(API_URL);
+        set({ projects: response.data, isLoading: false });
+      } catch (error) {
+        set({ error: error.message, isLoading: false });
+      }
+    },
+
+    addProject: async (formData) => {
+      set({ isLoading: true });
+      try {
+        const response = await axios.post(API_URL, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        // State will be updated via socket, but we can do it here too for responsiveness
+        return { success: true, project: response.data };
+      } catch (error) {
+        const message =
+          error.response?.data?.message || "Failed to add project";
+        set({ error: message, isLoading: false });
+        return { success: false, message };
+      }
+    },
+
+    updateProject: async (id, formData) => {
+      set({ isLoading: true });
+      try {
+        const response = await axios.put(`${API_URL}/${id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        return { success: true, project: response.data };
+      } catch (error) {
+        const message =
+          error.response?.data?.message || "Failed to update project";
+        set({ error: message, isLoading: false });
+        return { success: false, message };
+      }
+    },
+
+    deleteProject: async (id) => {
+      set({ isLoading: true });
+      try {
+        await axios.delete(`${API_URL}/${id}`);
+        return { success: true };
+      } catch (error) {
+        const message =
+          error.response?.data?.message || "Failed to delete project";
+        set({ error: message, isLoading: false });
+        return { success: false, message };
+      }
+    },
+  };
+});
+
+export default useProjectStore;
