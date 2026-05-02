@@ -29,24 +29,29 @@ export default function ContactsCMS() {
   const [selectedId, setSelectedId] = useState(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, id: null })
-  const audioRef = useRef(null)
+  
+  // Use a Ref for the Audio object so it's decoupled from the DOM
+  const audioInstance = useRef(null)
 
   useEffect(() => {
     fetchContacts()
+    // Initialize audio instance
+    audioInstance.current = new Audio("/sounds/notification.wav")
   }, [fetchContacts])
 
   // Play notification sound when trigger changes
   useEffect(() => {
-    if (playSoundTrigger > 0) {
-      if (audioRef.current) {
-        audioRef.current.currentTime = 0
-        const playPromise = audioRef.current.play()
-        if (playPromise !== undefined) {
-          playPromise.catch(e => {
+    if (playSoundTrigger > 0 && audioInstance.current) {
+      audioInstance.current.currentTime = 0
+      const playPromise = audioInstance.current.play()
+      if (playPromise !== undefined) {
+        playPromise.catch(e => {
+          // Ignore AbortError as it's harmless (navigation/re-render interruption)
+          if (e.name !== 'AbortError') {
             console.error("Audio playback failed:", e)
             toast.error("Audio blocked! Click anywhere on the page to enable sounds.")
-          })
-        }
+          }
+        })
       }
     }
   }, [playSoundTrigger])
@@ -138,13 +143,6 @@ export default function ContactsCMS() {
         </button>
       }
     >
-      {/* Notification Sound - User Provided Local WAV */}
-      <audio 
-        ref={audioRef} 
-        src="/sounds/notification.wav" 
-        preload="auto" 
-      />
-
       <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-170px)]">
         
         {/* Left: Message List (Gmail Style) */}
