@@ -13,6 +13,7 @@ import contactRoutes from './routes/contactRoutes.js';
 
 // Initialize Express
 const app = express();
+app.set('trust proxy', 1); // Trust first proxy (Render)
 const httpServer = createServer(app);
 
 const allowedOrigins = [
