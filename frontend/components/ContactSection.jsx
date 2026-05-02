@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { Mail, MapPin, Clock, Github, Linkedin, Twitter } from "lucide-react"
+import api from "@/lib/axios"
 
 export default function ContactSection() {
   const prefersReduced = useReducedMotion()
@@ -16,13 +17,9 @@ export default function ContactSection() {
     
     setFormState("sending")
     try {
-      const response = await fetch("http://localhost:5000/api/contacts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      })
+      const response = await api.post("/contacts", form)
       
-      if (response.ok) {
+      if (response.status === 201 || response.status === 200) {
         setFormState("sent")
         setForm({ name: "", email: "", message: "" })
         setTimeout(() => setFormState("idle"), 3000)

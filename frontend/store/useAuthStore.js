@@ -1,10 +1,7 @@
 import { create } from "zustand"
-import axios from "axios"
+import api from "@/lib/axios"
 
-const API_URL = "http://localhost:5000/api/auth"
-
-// Configure axios to send cookies
-axios.defaults.withCredentials = true
+// Remove hardcoded URL and global defaults as they are now in the axios instance
 
 const useAuthStore = create((set) => ({
   admin: null,
@@ -14,7 +11,7 @@ const useAuthStore = create((set) => ({
   login: async (email, password) => {
     set({ isLoading: true, error: null })
     try {
-      const response = await axios.post(`${API_URL}/login`, { email, password })
+      const response = await api.post("/auth/login", { email, password })
       set({ admin: response.data, isLoading: false })
       return { success: true }
     } catch (error) {
@@ -26,7 +23,7 @@ const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await axios.post(`${API_URL}/logout`)
+      await api.post("/auth/logout")
       set({ admin: null })
     } catch (error) {
       console.error("Logout failed:", error)
@@ -36,7 +33,7 @@ const useAuthStore = create((set) => ({
   checkAuth: async () => {
     set({ isLoading: true })
     try {
-      const response = await axios.get(`${API_URL}/profile`)
+      const response = await api.get("/auth/profile")
       set({ admin: response.data, isLoading: false })
     } catch (error) {
       set({ admin: null, isLoading: false })

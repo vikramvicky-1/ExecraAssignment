@@ -1,15 +1,6 @@
 import { create } from "zustand"
-import axios from "axios"
-import { io } from "socket.io-client"
-
-const API_URL = "http://localhost:5000/api/content"
-const SOCKET_URL = "http://localhost:5000"
-axios.defaults.withCredentials = true
-
-// Initialize Socket.io
-const socket = io(SOCKET_URL, {
-  withCredentials: true
-})
+import api from "@/lib/axios"
+import socket from "@/lib/socket"
 
 const useContentStore = create((set, get) => {
   // Setup socket listeners
@@ -38,7 +29,7 @@ const useContentStore = create((set, get) => {
     fetchContent: async () => {
       set({ isLoading: true })
       try {
-        const response = await axios.get(API_URL)
+        const response = await api.get("/content")
         set({ content: response.data, isLoading: false })
       } catch (error) {
         set({ error: error.message, isLoading: false })
@@ -48,7 +39,7 @@ const useContentStore = create((set, get) => {
     updateContent: async (data) => {
       set({ isUpdating: true })
       try {
-        const response = await axios.put(API_URL, data)
+        const response = await api.put("/content", data)
         set({ content: response.data, isUpdating: false })
         return { success: true }
       } catch (error) {
@@ -61,7 +52,7 @@ const useContentStore = create((set, get) => {
     // Contact Management
     fetchContacts: async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/contacts")
+        const response = await api.get("/contacts")
         const contacts = response.data
         const unreadCount = contacts.filter(c => !c.isRead).length
         set({ contacts, unreadCount })
@@ -72,7 +63,7 @@ const useContentStore = create((set, get) => {
 
     markAsRead: async (id) => {
       try {
-        await axios.patch(`http://localhost:5000/api/contacts/${id}/read`)
+        await api.patch(`/contacts/${id}/read`)
         const { contacts, unreadCount } = get()
         const updatedContacts = contacts.map(c => 
           c._id === id ? { ...c, isRead: true } : c
@@ -88,7 +79,7 @@ const useContentStore = create((set, get) => {
 
     deleteContact: async (id) => {
       try {
-        await axios.delete(`http://localhost:5000/api/contacts/${id}`)
+        await api.delete(`/contacts/${id}`)
         const { contacts, unreadCount } = get()
         const contactToDelete = contacts.find(c => c._id === id)
         const updatedContacts = contacts.filter(c => c._id !== id)

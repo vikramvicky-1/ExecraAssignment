@@ -17,9 +17,13 @@ const httpServer = createServer(app);
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  'http://localhost:3000',
-  'https://execra-assignment.vercel.app'
+  ...(process.env.ADDITIONAL_ORIGINS ? process.env.ADDITIONAL_ORIGINS.split(',') : [])
 ].filter(Boolean);
+
+// Fallback for local development if FRONTEND_URL is not set
+if (allowedOrigins.length === 0) {
+  allowedOrigins.push('http://localhost:3000');
+}
 
 // Initialize Socket.io
 const io = new Server(httpServer, {

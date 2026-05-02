@@ -1,12 +1,6 @@
 import { create } from "zustand";
-import axios from "axios";
-import { io } from "socket.io-client";
-
-const API_URL = "http://localhost:5000/api/projects";
-const SOCKET_URL = "http://localhost:5000";
-axios.defaults.withCredentials = true;
-
-const socket = io(SOCKET_URL, { withCredentials: true });
+import api from "@/lib/axios";
+import socket from "@/lib/socket";
 
 const useProjectStore = create((set, get) => {
   // Helper to sort projects (Featured first, then by date)
@@ -49,7 +43,7 @@ const useProjectStore = create((set, get) => {
     fetchProjects: async () => {
       set({ isLoading: true });
       try {
-        const response = await axios.get(API_URL);
+        const response = await api.get("/projects");
         set({ projects: response.data, isLoading: false });
       } catch (error) {
         set({ error: error.message, isLoading: false });
@@ -59,7 +53,7 @@ const useProjectStore = create((set, get) => {
     addProject: async (formData) => {
       set({ isLoading: true });
       try {
-        const response = await axios.post(API_URL, formData, {
+        const response = await api.post("/projects", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         // State will be updated via socket, but we can do it here too for responsiveness
@@ -75,7 +69,7 @@ const useProjectStore = create((set, get) => {
     updateProject: async (id, formData) => {
       set({ isLoading: true });
       try {
-        const response = await axios.put(`${API_URL}/${id}`, formData, {
+        const response = await api.put(`/projects/${id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         return { success: true, project: response.data };
@@ -90,7 +84,7 @@ const useProjectStore = create((set, get) => {
     deleteProject: async (id) => {
       set({ isLoading: true });
       try {
-        await axios.delete(`${API_URL}/${id}`);
+        await api.delete(`/projects/${id}`);
         return { success: true };
       } catch (error) {
         const message =
