@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
   LayoutDashboard, 
@@ -26,10 +26,43 @@ export default function CMSLayout({ children, title, subtitle, actions, fullHeig
   const router = useRouter()
   const pathname = usePathname()
   const { admin, logout, checkAuth, isLoading } = useAuthStore()
-  const { fetchContacts, unreadCount } = useContentStore()
+  const { fetchContacts, unreadCount, contacts, playSoundTrigger } = useContentStore()
   
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const audioInstance = useRef(null)
+
+  useEffect(() => {
+    // Initialize audio instance
+    audioInstance.current = new Audio("/sounds/notification.wav")
+  }, [])
+
+  // Play notification sound and show toast when trigger changes
+  useEffect(() => {
+    if (playSoundTrigger > 0) {
+      // Show toast
+      const newContact = contacts[0]
+      if (newContact) {
+        toast.success(`New message from ${newContact.name}`, {
+          icon: '📧',
+          duration: 5000
+        })
+      }
+
+      if (audioInstance.current) {
+        audioInstance.current.currentTime = 0
+        const playPromise = audioInstance.current.play()
+        if (playPromise !== undefined) {
+          playPromise.catch(e => {
+            if (e.name !== 'AbortError') {
+              console.error("Audio playback failed:", e)
+              toast.error("Audio blocked! Click anywhere on the page to enable sounds.")
+            }
+          })
+        }
+      }
+    }
+  }, [playSoundTrigger, contacts])
 
   useEffect(() => {
     checkAuth()
@@ -168,16 +201,19 @@ export default function CMSLayout({ children, title, subtitle, actions, fullHeig
       {/* Main Content Container */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Mobile Header */}
-        <header className="h-16 border-b border-black/[0.05] bg-white/50 backdrop-blur-xl lg:hidden flex items-center justify-between px-6 shrink-0 z-50">
+        <header className="h-20 border-b border-black/[0.05] bg-white/50 backdrop-blur-xl lg:hidden flex items-center justify-between px-6 shrink-0 z-50">
           <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-[#2D5A3D]" />
-            <span className="font-dm-mono text-[10px] tracking-widest uppercase text-[#1A1814] font-bold">CMS</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-[#2D5A3D]" />
+            <span className="font-dm-mono text-xs tracking-widest uppercase text-[#1A1814] font-bold">CMS Admin</span>
           </div>
           <button 
             onClick={() => setIsMobileOpen(true)}
-            className="p-2 -mr-2 text-[#1A1814]"
+            className="p-2 -mr-2 text-[#1A1814] relative"
           >
-            <Menu size={20} />
+            <Menu size={24} />
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
+            )}
           </button>
         </header>
 
@@ -225,11 +261,11 @@ function SidebarLink({ icon, label, href, active = false, collapsed = false, bad
   return (
     <Link
       href={href}
-      className={`relative flex items-center gap-3 px-3 py-3 rounded-xl font-dm-sans text-sm transition-all group ${
+      className={`relative flex items-center gap-4 px-4 py-3.5 rounded-2xl font-dm-sans text-[15px] transition-all group ${
         active 
           ? "bg-[#2D5A3D] text-white shadow-lg shadow-[#2D5A3D]/20 font-semibold" 
           : "text-[#6B6560] hover:bg-black/[0.03] hover:text-[#1A1814]"
-      } ${collapsed ? 'justify-center' : ''}`}
+      } ${collapsed ? 'justify-center px-3' : ''}`}
       title={collapsed ? label : ""}
     >
       <div className="shrink-0 relative">

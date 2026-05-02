@@ -25,46 +25,14 @@ import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
 
 export default function ContactsCMS() {
-  const { contacts, fetchContacts, markAsRead, deleteContact, unreadCount, playSoundTrigger } = useContentStore()
+  const { contacts, fetchContacts, markAsRead, deleteContact, unreadCount } = useContentStore()
   const [selectedId, setSelectedId] = useState(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, id: null })
   
-  // Use a Ref for the Audio object so it's decoupled from the DOM
-  const audioInstance = useRef(null)
-
   useEffect(() => {
     fetchContacts()
-    // Initialize audio instance
-    audioInstance.current = new Audio("/sounds/notification.wav")
   }, [fetchContacts])
-
-  // Play notification sound and show toast when trigger changes
-  useEffect(() => {
-    if (playSoundTrigger > 0) {
-      // Show toast
-      const newContact = contacts[0]
-      if (newContact) {
-        toast.success(`New message from ${newContact.name}`, {
-          icon: '📧',
-          duration: 5000
-        })
-      }
-
-      if (audioInstance.current) {
-        audioInstance.current.currentTime = 0
-        const playPromise = audioInstance.current.play()
-        if (playPromise !== undefined) {
-          playPromise.catch(e => {
-            if (e.name !== 'AbortError') {
-              console.error("Audio playback failed:", e)
-              toast.error("Audio blocked! Click anywhere on the page to enable sounds.")
-            }
-          })
-        }
-      }
-    }
-  }, [playSoundTrigger])
 
   const filteredContacts = contacts.filter(c => 
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
