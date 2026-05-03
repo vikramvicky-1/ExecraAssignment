@@ -162,7 +162,7 @@ export default function AboutCMS() {
       {/* Real-time Status Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 bg-white p-6 rounded-[32px] border border-black/[0.05] shadow-sm">
         <div className="flex items-center gap-3">
-          <div className={`w-3 h-3 rounded-full ${isUpdating ? 'bg-orange-400 animate-pulse' : 'bg-[#2D5A3D]'}`} />
+          <div className={`w-3 h-3 rounded-full ${isUpdating ? 'bg-orange-400 animate-pulse' : 'bg-portfolio-accent'}`} />
           <div>
             <p className="font-dm-mono text-[10px] uppercase tracking-widest text-[#1A1814] font-bold">
               {isUpdating ? "Syncing Story..." : "Story Real-time Sync Active"}
@@ -182,7 +182,7 @@ export default function AboutCMS() {
                 exit={{ opacity: 0, x: 10 }}
                 className="flex items-center gap-2 px-4 py-2 bg-[#FAF8F4] rounded-full border border-black/[0.03]"
               >
-                <Loader2 size={14} className="animate-spin text-[#2D5A3D]" />
+                <Loader2 size={14} className="animate-spin text-portfolio-accent" />
                 <span className="font-dm-mono text-[9px] uppercase tracking-widest text-[#6B6560]">Saving</span>
               </motion.div>
             )}
@@ -197,7 +197,7 @@ export default function AboutCMS() {
           <div className="bg-white border border-black/[0.05] rounded-[32px] p-8 shadow-sm">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
-                <Quote size={20} className="text-[#2D5A3D]" />
+                <Quote size={20} className="text-portfolio-accent" />
                 <div>
                   <h3 className="font-playfair text-xl font-bold text-[#1A1814]">My Manifesto</h3>
                   <p className="font-dm-sans text-sm text-[#6B6560] font-light">Your engineering philosophy paragraphs.</p>
@@ -205,7 +205,7 @@ export default function AboutCMS() {
               </div>
               <button 
                 onClick={addManifestoParagraph}
-                className="flex items-center gap-2 bg-[#FAF8F4] text-[#2D5A3D] px-4 py-2 rounded-full font-dm-mono text-[10px] uppercase tracking-widest font-bold hover:bg-[#2D5A3D] hover:text-white transition-all shadow-sm group"
+                className="flex items-center gap-2 bg-[#FAF8F4] text-portfolio-accent px-4 py-2 rounded-full font-dm-mono text-[10px] uppercase tracking-widest font-bold hover:bg-portfolio-accent hover:text-white transition-all shadow-sm group"
               >
                 <Plus size={14} />
                 <span>Add Paragraph</span>
@@ -247,7 +247,7 @@ export default function AboutCMS() {
               {formData.manifesto.length === 0 && (
                 <div className="py-12 flex flex-col items-center justify-center text-center border-2 border-dashed border-black/[0.03] rounded-3xl">
                   <p className="font-dm-sans text-sm text-[#B8B3AC]">No manifesto paragraphs added.</p>
-                  <button onClick={addManifestoParagraph} className="mt-4 text-[#2D5A3D] font-dm-mono text-xs uppercase tracking-widest font-bold">Start Writing</button>
+                  <button onClick={addManifestoParagraph} className="mt-4 text-portfolio-accent font-dm-mono text-xs uppercase tracking-widest font-bold">Start Writing</button>
                 </div>
               )}
             </div>
@@ -259,7 +259,7 @@ export default function AboutCMS() {
           <div className="bg-white border border-black/[0.05] rounded-[32px] p-8 shadow-sm">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
-                <Clock size={20} className="text-[#2D5A3D]" />
+                <Clock size={20} className="text-portfolio-accent" />
                 <div>
                   <h3 className="font-playfair text-xl font-bold text-[#1A1814]">The Milestones</h3>
                   <p className="font-dm-sans text-sm text-[#6B6560] font-light">Your career timeline.</p>
@@ -267,7 +267,7 @@ export default function AboutCMS() {
               </div>
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="flex items-center gap-2 bg-[#FAF8F4] text-[#2D5A3D] px-4 py-2 rounded-full font-dm-mono text-[10px] uppercase tracking-widest font-bold hover:bg-[#2D5A3D] hover:text-white transition-all shadow-sm"
+                className="flex items-center gap-2 bg-[#FAF8F4] text-portfolio-accent px-4 py-2 rounded-full font-dm-mono text-[10px] uppercase tracking-widest font-bold hover:bg-portfolio-accent hover:text-white transition-all shadow-sm"
               >
                 <Plus size={14} />
                 <span>Add</span>
@@ -293,7 +293,7 @@ export default function AboutCMS() {
                             type="text"
                             value={milestone.year}
                             onChange={(e) => updateMilestone(index, 'year', e.target.value)}
-                            className="w-full bg-transparent border-none p-0 font-dm-mono text-sm font-bold text-[#2D5A3D] focus:ring-0"
+                            className="w-full bg-transparent border-none p-0 font-dm-mono text-sm font-bold text-portfolio-accent focus:ring-0"
                           />
                         </div>
                         <div className="col-span-8">
@@ -354,11 +354,11 @@ export default function AboutCMS() {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="relative w-full max-w-lg bg-white rounded-[40px] p-10 shadow-2xl overflow-hidden"
             >
-              <div className="absolute top-0 left-0 w-full h-2 bg-[#2D5A3D]" />
+              <div className="absolute top-0 left-0 w-full h-2 bg-portfolio-accent" />
               
               <div className="flex items-center justify-between mb-10">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#2D5A3D]/10 flex items-center justify-center text-[#2D5A3D]">
+                  <div className="w-12 h-12 rounded-2xl bg-portfolio-accent/10 flex items-center justify-center text-portfolio-accent">
                     <Clock size={24} />
                   </div>
                   <div>
@@ -383,7 +383,7 @@ export default function AboutCMS() {
                       placeholder="2026"
                       value={newMilestone.year}
                       onChange={(e) => setNewMilestone({...newMilestone, year: e.target.value})}
-                      className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-2xl px-6 py-4 font-dm-mono text-sm font-bold text-[#2D5A3D] focus:ring-2 focus:ring-[#2D5A3D]/20 outline-none transition-all"
+                      className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-2xl px-6 py-4 font-dm-mono text-sm font-bold text-portfolio-accent focus:ring-2 focus:ring-[#2D5A3D]/20 outline-none transition-all"
                     />
                   </div>
                   <div className="col-span-8">
@@ -411,7 +411,7 @@ export default function AboutCMS() {
                 <div className="pt-4">
                   <button 
                     onClick={handleAddMilestone}
-                    className="w-full bg-[#2D5A3D] text-white py-5 rounded-2xl font-dm-sans font-bold hover:bg-[#1A1814] transition-all shadow-xl shadow-[#2D5A3D]/20"
+                    className="w-full bg-portfolio-accent text-white py-5 rounded-2xl font-dm-sans font-bold hover:bg-[#1A1814] transition-all shadow-xl shadow-[#2D5A3D]/20"
                   >
                     Add Milestone
                   </button>

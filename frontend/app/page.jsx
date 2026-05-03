@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from "framer-motion"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import LoadingScreen from "@/components/LoadingScreen"
-import Navigation from "@/components/Navigation"
 import HeroSection from "@/components/HeroSection"
 import MarqueeSection from "@/components/MarqueeSection"
 import WorkSection from "@/components/WorkSection"
@@ -18,12 +17,12 @@ if (typeof window !== "undefined") {
 }
 
 const SECTION_COLORS = {
-  hero: "#FAF8F4",
-  marquee: "#EDF2EE",
-  work: "#FDF6ED",
-  skills: "#EDF4F7",
-  about: "#F2F0EB",
-  contact: "#EEF2ED",
+  hero: "#FFF8F6",
+  marquee: "#F8FBFA",
+  work: "#FDFBF8",
+  skills: "#F8FAFD",
+  about: "#FAF9F8",
+  contact: "#F9FBFA",
 }
 
 export default function Portfolio() {
@@ -83,7 +82,7 @@ export default function Portfolio() {
     }
   }, [loadingDone])
 
-  // GSAP ScrollTrigger background color transitions
+  // GSAP ScrollTrigger background color transitions & Content Scrub Animations
   useEffect(() => {
     if (!loadingDone) return
 
@@ -111,13 +110,56 @@ export default function Portfolio() {
       triggers.push(st)
     })
 
-    return () => triggers.forEach((t) => t.kill())
+    // Content Scrub Animations (Slide Up and Reveal)
+    const scrubUpElements = document.querySelectorAll('.gsap-scrub-up')
+    scrubUpElements.forEach((el) => {
+      gsap.fromTo(el, 
+        { y: 150, opacity: 0 },
+        { 
+          y: 0, 
+          opacity: 1,
+          scrollTrigger: {
+            trigger: el,
+            start: "top bottom-=5%",
+            end: "top center+=20%",
+            scrub: 1.2,
+          }
+        }
+      )
+    })
+
+    // Parallax Effects
+    const parallaxElements = document.querySelectorAll('.gsap-parallax')
+    parallaxElements.forEach((el) => {
+      const speed = el.dataset.speed || 100
+      gsap.to(el, {
+        y: -speed,
+        ease: "none",
+        scrollTrigger: {
+          trigger: el,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      })
+    })
+
+    return () => {
+      triggers.forEach((t) => t.kill())
+      ScrollTrigger.getAll().forEach(t => t.kill())
+    }
   }, [loadingDone])
 
   const handleLoadingComplete = () => {
-    setLoadingDone(true)
-    setTimeout(() => setHeroVisible(true), 200)
-  }
+    // Force reset scroll to top before revealing hero
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    }
+    
+    setLoadingDone(true);
+    setTimeout(() => setHeroVisible(true), 200);
+  };
 
   return (
     <>
@@ -132,8 +174,7 @@ export default function Portfolio() {
         animate={heroVisible ? { y: 0, opacity: 1 } : { y: 40, opacity: 0 }}
         transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
-        <Navigation activeSection={activeSection} />
-        <HeroSection visible={heroVisible} />
+        <HeroSection visible={heroVisible} activeSection={activeSection} />
         <MarqueeSection />
         <WorkSection />
         <SkillsSection />

@@ -31,9 +31,7 @@ const portfolioContentSchema = new mongoose.Schema({
     major: [
       {
         name: { type: String },
-        pct: { type: Number },
-        color: { type: String },
-        symbol: { type: String }
+        pct: { type: Number }
       }
     ],
     minor: [{ type: String }],

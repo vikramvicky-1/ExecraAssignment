@@ -36,6 +36,11 @@ router.get("/", async (req, res) => {
 router.patch("/:id/read", async (req, res) => {
   try {
     const contact = await Contact.findByIdAndUpdate(req.id || req.params.id, { isRead: true }, { new: true });
+    
+    if (req.io) {
+      req.io.emit("contactRead", contact);
+    }
+    
     res.json(contact);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -46,6 +51,11 @@ router.patch("/:id/read", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     await Contact.findByIdAndDelete(req.params.id);
+    
+    if (req.io) {
+      req.io.emit("contactDeleted", req.params.id);
+    }
+    
     res.json({ message: "Contact deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });

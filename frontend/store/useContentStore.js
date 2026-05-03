@@ -17,6 +17,32 @@ const useContentStore = create((set, get) => {
     })
   })
 
+  socket.on("contactRead", (updatedContact) => {
+    const { contacts, unreadCount } = get()
+    const wasUnread = contacts.find(c => c._id === updatedContact._id && !c.isRead)
+    if (wasUnread) {
+      const updatedContacts = contacts.map(c => 
+        c._id === updatedContact._id ? updatedContact : c
+      )
+      set({ 
+        contacts: updatedContacts, 
+        unreadCount: Math.max(0, unreadCount - 1) 
+      })
+    }
+  })
+
+  socket.on("contactDeleted", (id) => {
+    const { contacts, unreadCount } = get()
+    const contactToDelete = contacts.find(c => c._id === id)
+    if (contactToDelete) {
+      const updatedContacts = contacts.filter(c => c._id !== id)
+      set({ 
+        contacts: updatedContacts,
+        unreadCount: (!contactToDelete.isRead) ? Math.max(0, unreadCount - 1) : unreadCount
+      })
+    }
+  })
+
   return {
     content: null,
     contacts: [],

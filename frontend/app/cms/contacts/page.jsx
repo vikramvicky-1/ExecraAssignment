@@ -105,7 +105,7 @@ export default function ContactsCMS() {
         <span className="flex items-center gap-2">
           Inbox
           {unreadCount > 0 && (
-            <span className="md:hidden text-[#2D5A3D] text-lg font-dm-sans font-medium">({unreadCount})</span>
+            <span className="md:hidden text-portfolio-accent text-lg font-dm-sans font-medium">({unreadCount})</span>
           )}
         </span>
       }
@@ -114,7 +114,7 @@ export default function ContactsCMS() {
       actions={
         <button 
           onClick={exportToPDF}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-black/[0.05] text-[#2D5A3D] hover:bg-[#2D5A3D] hover:text-white hover:border-[#2D5A3D] shadow-sm transition-all font-dm-sans text-xs font-bold group"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-black/[0.05] text-portfolio-accent hover:bg-portfolio-accent hover:text-white hover:border-portfolio-accent shadow-sm transition-all font-dm-sans text-xs font-bold group"
         >
           <Download size={14} className="group-hover:scale-110 transition-transform" />
           Export PDF
@@ -159,11 +159,11 @@ export default function ContactsCMS() {
                   {!contact.isRead && (
                     <motion.div 
                       layoutId={`unread-bar-${contact._id}`}
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#2D5A3D] rounded-r-full" 
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-portfolio-accent rounded-r-full" 
                     />
                   )}
                   
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${!contact.isRead ? 'bg-[#2D5A3D] text-white' : 'bg-[#FAF8F4] text-[#6B6560]'}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${!contact.isRead ? 'bg-portfolio-accent text-white' : 'bg-[#FAF8F4] text-[#6B6560]'}`}>
                     {contact.name.charAt(0).toUpperCase()}
                   </div>
 
@@ -212,13 +212,13 @@ export default function ContactsCMS() {
                     >
                       <ChevronRight className="rotate-180" size={24} />
                     </button>
-                    <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-[#FAF8F4] flex items-center justify-center text-[#2D5A3D]">
+                    <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-[#FAF8F4] flex items-center justify-center text-portfolio-accent">
                       <User size={20} className="lg:hidden" />
                       <User size={24} className="hidden lg:block" />
                     </div>
                     <div className="min-w-0">
                       <h3 className="font-playfair text-lg lg:text-xl font-bold text-[#1A1814] truncate">{selectedContact.name}</h3>
-                      <p className="font-dm-mono text-[10px] lg:text-xs text-[#2D5A3D] truncate">{selectedContact.email}</p>
+                      <p className="font-dm-mono text-[10px] lg:text-xs text-portfolio-accent truncate">{selectedContact.email}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 lg:gap-3">
@@ -253,7 +253,7 @@ export default function ContactsCMS() {
                   <div className="flex gap-4">
                     <a 
                       href={`mailto:${selectedContact.email}`}
-                      className="flex-1 lg:flex-none justify-center bg-[#2D5A3D] text-white px-8 py-4 rounded-2xl font-dm-sans font-bold text-sm hover:bg-[#1A1814] transition-all flex items-center gap-3"
+                      className="flex-1 lg:flex-none justify-center bg-portfolio-accent text-white px-8 py-4 rounded-2xl font-dm-sans font-bold text-sm hover:bg-[#1A1814] transition-all flex items-center gap-3"
                     >
                       <RotateCcw size={18} />
                       Reply
@@ -263,7 +263,7 @@ export default function ContactsCMS() {
               </motion.div>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center p-12 text-center opacity-30">
-                <div className="w-24 h-24 rounded-[40px] bg-[#FAF8F4] flex items-center justify-center text-[#2D5A3D] mb-6">
+                <div className="w-24 h-24 rounded-[40px] bg-[#FAF8F4] flex items-center justify-center text-portfolio-accent mb-6">
                   <Mail size={48} />
                 </div>
                 <h3 className="font-playfair text-2xl font-bold mb-2">Select a message</h3>

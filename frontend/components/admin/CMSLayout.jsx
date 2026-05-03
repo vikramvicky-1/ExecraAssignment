@@ -14,7 +14,9 @@ import {
   X,
   Loader2,
   Sparkles,
-  Mail
+  Mail,
+  Volume2,
+  VolumeX
 } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
@@ -30,12 +32,40 @@ export default function CMSLayout({ children, title, subtitle, actions, fullHeig
   
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [audioUnlocked, setAudioUnlocked] = useState(false)
   const audioInstance = useRef(null)
 
   useEffect(() => {
     // Initialize audio instance
     audioInstance.current = new Audio("/sounds/notification.wav")
-  }, [])
+    audioInstance.current.volume = 0.5
+
+    // Function to unlock audio on first interaction
+    const unlockAudio = () => {
+      if (audioInstance.current && !audioUnlocked) {
+        // Play a silent short burst to unlock the audio context
+        audioInstance.current.play()
+          .then(() => {
+            audioInstance.current.pause()
+            audioInstance.current.currentTime = 0
+            setAudioUnlocked(true)
+            // Remove listeners once unlocked
+            window.removeEventListener('click', unlockAudio)
+            window.removeEventListener('keydown', unlockAudio)
+            console.log("Audio unlocked successfully")
+          })
+          .catch(e => console.log("Audio unlock failed, waiting for real interaction:", e))
+      }
+    }
+
+    window.addEventListener('click', unlockAudio)
+    window.addEventListener('keydown', unlockAudio)
+
+    return () => {
+      window.removeEventListener('click', unlockAudio)
+      window.removeEventListener('keydown', unlockAudio)
+    }
+  }, [audioUnlocked])
 
   const lastTriggered = useRef(playSoundTrigger)
   const isFirstMount = useRef(true)
@@ -55,24 +85,30 @@ export default function CMSLayout({ children, title, subtitle, actions, fullHeig
       if (newContact) {
         toast.success(`New message from ${newContact.name}`, {
           icon: '📧',
-          duration: 5000
+          duration: 5000,
+          style: {
+            background: '#1A1814',
+            color: '#FFFFFF',
+            fontFamily: 'var(--font-manrope)',
+            fontSize: '14px',
+            fontWeight: 700
+          }
         })
       }
 
-      if (audioInstance.current) {
+      if (audioInstance.current && audioUnlocked) {
         audioInstance.current.currentTime = 0
         const playPromise = audioInstance.current.play()
         if (playPromise !== undefined) {
           playPromise.catch(e => {
             if (e.name !== 'AbortError') {
               console.error("Audio playback failed:", e)
-              toast.error("Audio blocked! Click anywhere on the page to enable sounds.")
             }
           })
         }
       }
     }
-  }, [playSoundTrigger, contacts])
+  }, [playSoundTrigger, contacts, audioUnlocked])
 
   useEffect(() => {
     checkAuth()
@@ -99,7 +135,7 @@ export default function CMSLayout({ children, title, subtitle, actions, fullHeig
   if (isLoading || !admin) {
     return (
       <div className="min-h-screen bg-[#FAF8F4] flex items-center justify-center">
-        <Loader2 className="animate-spin text-[#2D5A3D]" size={40} />
+        <Loader2 className="animate-spin text-portfolio-accent" size={40} />
       </div>
     )
   }
@@ -143,7 +179,7 @@ export default function CMSLayout({ children, title, subtitle, actions, fullHeig
               animate={{ opacity: 1 }} 
               className="flex items-center gap-3 whitespace-nowrap"
             >
-              <div className="w-2.5 h-2.5 rounded-full bg-[#2D5A3D]" />
+              <div className="w-2.5 h-2.5 rounded-full bg-portfolio-accent" />
               <span className="font-dm-mono text-xs tracking-widest uppercase text-[#1A1814] font-bold">CMS Admin</span>
             </motion.div>
           )}
@@ -163,6 +199,21 @@ export default function CMSLayout({ children, title, subtitle, actions, fullHeig
           <SidebarLink icon={<Layers size={18} />} label="Skills" href="/cms/skills" active={pathname === "/cms/skills"} collapsed={isCollapsed} />
           <SidebarLink icon={<User size={18} />} label="About" href="/cms/about" active={pathname === "/cms/about"} collapsed={isCollapsed} />
         </nav>
+
+        {/* Audio Status Indicator */}
+        <div className={`mt-auto mb-4 px-3 flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest transition-opacity duration-500 ${isCollapsed ? 'justify-center' : ''}`}>
+          {audioUnlocked ? (
+            <div className="flex items-center gap-2 text-green-500">
+              <Volume2 size={14} />
+              {!isCollapsed && <span>Audio On</span>}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-red-400">
+              <VolumeX size={14} />
+              {!isCollapsed && <span>Audio Blocked</span>}
+            </div>
+          )}
+        </div>
 
         <button 
           onClick={handleLogout}
@@ -184,7 +235,7 @@ export default function CMSLayout({ children, title, subtitle, actions, fullHeig
       >
         <div className="flex items-center justify-between mb-10 px-2">
           <div className="flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#2D5A3D]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-portfolio-accent" />
             <span className="font-dm-mono text-xs tracking-widest uppercase text-[#1A1814] font-bold">CMS Admin</span>
           </div>
           <button onClick={() => setIsMobileOpen(false)} className="p-2 -mr-2 text-[#B8B3AC]"><X size={20} /></button>
@@ -213,7 +264,7 @@ export default function CMSLayout({ children, title, subtitle, actions, fullHeig
         {/* Mobile Header */}
         <header className="h-20 border-b border-black/[0.05] bg-white/50 backdrop-blur-xl lg:hidden flex items-center justify-between px-6 shrink-0 z-50">
           <div className="flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#2D5A3D]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-portfolio-accent" />
             <span className="font-dm-mono text-xs tracking-widest uppercase text-[#1A1814] font-bold">CMS Admin</span>
           </div>
           <button 
@@ -238,7 +289,7 @@ export default function CMSLayout({ children, title, subtitle, actions, fullHeig
                   transition={{ duration: 0.4 }}
                   className="flex-1 min-w-0"
                 >
-                  {title && <h1 className="font-playfair text-2xl md:text-3xl lg:text-4xl font-bold text-[#1A1814] leading-tight truncate">{title}</h1>}
+                  {title && <h1 className="font-manrope text-2xl md:text-3xl lg:text-4xl font-black uppercase text-[#1A1814] leading-tight truncate tracking-tight">{title}</h1>}
                   {subtitle && <p className="hidden md:block font-dm-sans text-[#6B6560] font-light mt-1 text-sm md:text-base">{subtitle}</p>}
                 </motion.div>
                 {actions && (
@@ -273,7 +324,7 @@ function SidebarLink({ icon, label, href, active = false, collapsed = false, bad
       href={href}
       className={`relative flex items-center gap-4 px-4 py-3.5 rounded-2xl font-dm-sans text-[15px] transition-all group ${
         active 
-          ? "bg-[#2D5A3D] text-white shadow-lg shadow-[#2D5A3D]/20 font-semibold" 
+          ? "bg-portfolio-accent text-white shadow-lg shadow-[#F63D18]/20 font-bold" 
           : "text-[#6B6560] hover:bg-black/[0.03] hover:text-[#1A1814]"
       } ${collapsed ? 'justify-center px-3' : ''}`}
       title={collapsed ? label : ""}
@@ -285,16 +336,20 @@ function SidebarLink({ icon, label, href, active = false, collapsed = false, bad
         )}
       </div>
       {!collapsed && (
-        <span className="whitespace-nowrap overflow-hidden flex-1 flex justify-between items-center">
+        <motion.span 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="whitespace-nowrap overflow-hidden flex-1 flex justify-between items-center"
+        >
           {label}
           {badge && <div className="w-1.5 h-1.5 bg-red-500 rounded-full lg:hidden" />}
-        </span>
+        </motion.span>
       )}
       
       {collapsed && active && (
         <motion.div 
           layoutId="active-dot"
-          className="absolute -right-1 w-1.5 h-1.5 rounded-full bg-[#2D5A3D]"
+          className="absolute -right-1 w-1.5 h-1.5 rounded-full bg-portfolio-accent"
         />
       )}
     </Link>

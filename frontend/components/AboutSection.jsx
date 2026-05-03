@@ -49,7 +49,7 @@ function SectionHeading({ label, title }) {
   return (
     <div className="mb-12">
       <motion.p
-        className="font-dm-mono text-[#2D5A3D] uppercase mb-4"
+        className="font-dm-mono text-portfolio-accent uppercase mb-4"
         style={{ fontSize: "11px", letterSpacing: "0.2em", fontWeight: 700 }}
         initial={{ opacity: 0, x: -10 }}
         whileInView={{ opacity: 1, x: 0 }}
@@ -62,11 +62,12 @@ function SectionHeading({ label, title }) {
         {titleArray.map((line, i) => (
           <motion.h2
             key={i}
-            className="font-playfair text-[#1A1814]"
+            className="font-manrope text-[#1A1814] uppercase"
             style={{ 
               fontSize: "clamp(64px, 9vw, 130px)", 
-              fontWeight: 800, 
-              lineHeight: 1,
+              fontWeight: 900, 
+              lineHeight: 0.9,
+              letterSpacing: "-0.05em",
               display: "block"
             }}
             initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 30 }}
@@ -108,26 +109,25 @@ export default function AboutSection() {
     <section
       id="about"
       style={{
-        background: "var(--section-about)",
         padding: "120px clamp(24px, 5vw, 64px)",
       }}
     >
       <div className="max-w-7xl mx-auto">
-        <SectionHeading label="My Philosophy" title={["The", "Engineer."]} />
+        <SectionHeading label="ENGINEERING MINDSET — 2021/25" title={["The", "Architect."]} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 mt-24 items-start">
           {/* Left: Manifesto */}
-          <div className="space-y-12">
+          <div className="space-y-12 gsap-scrub-up">
             {manifesto.map((paragraph, i) => (
               <WordReveal key={i} text={paragraph} />
             ))}
           </div>
 
           {/* Right: Milestones */}
-          <div className="lg:pl-12 space-y-16">
+          <div className="lg:pl-12 space-y-16 gsap-scrub-up">
             <div className="space-y-4">
               <h3 className="font-playfair text-3xl italic text-[#1A1814]">The Milestones</h3>
-              <div className="w-12 h-[1px] bg-[#2D5A3D]" />
+              <div className="w-12 h-[1px] bg-portfolio-accent" />
             </div>
 
             <div className="space-y-12 border-l border-black/5 pl-8 py-2">
@@ -140,8 +140,8 @@ export default function AboutSection() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                 >
-                  <div className="absolute -left-[37px] top-1.5 w-4 h-4 rounded-full bg-white border-2 border-[#2D5A3D]" />
-                  <div className="font-dm-mono text-[#2D5A3D] text-[10px] mb-1">{milestone.year}</div>
+                  <div className="absolute -left-[37px] top-1.5 w-4 h-4 rounded-full bg-white border-2 border-portfolio-accent" />
+                  <div className="font-dm-mono text-portfolio-accent text-[10px] mb-1">{milestone.year}</div>
                   <h4 className="font-dm-sans text-[#1A1814] font-semibold text-lg mb-2">{milestone.title}</h4>
                   <p className="font-dm-sans text-[#6B6560] text-sm leading-relaxed">{milestone.desc}</p>
                 </motion.div>

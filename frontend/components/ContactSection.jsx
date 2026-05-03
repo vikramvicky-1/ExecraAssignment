@@ -1,359 +1,375 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import { Mail, MapPin, Clock, Github, Linkedin, Twitter } from "lucide-react"
-import api from "@/lib/axios"
+import { useState, useRef } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { ArrowUpRight, Github, Linkedin, Instagram } from "lucide-react";
+import { toast } from "react-hot-toast";
+import api from "@/lib/axios";
+
+// High-Fidelity Staggered Link with Icon support
+const FooterLink = ({ title, onClick, href, icon: Icon }) => {
+  const letters = title.split("");
+  
+  return (
+    <motion.a
+      href={href || "#"}
+      onClick={(e) => {
+        if (onClick) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      target={href && href !== "#" ? "_blank" : undefined}
+      rel={href && href !== "#" ? "noopener noreferrer" : undefined}
+      whileHover="hover"
+      initial="initial"
+      className="relative inline-flex items-center gap-3 cursor-pointer h-5 md:h-7 overflow-hidden group"
+    >
+      {/* Social Icon */}
+      {Icon && (
+        <motion.div 
+          className="text-white opacity-50 group-hover:opacity-100 transition-opacity"
+          variants={{
+            initial: { scale: 0.9 },
+            hover: { scale: 1.1 }
+          }}
+        >
+          <Icon size={18} />
+        </motion.div>
+      )}
+
+      <div className="relative flex h-full items-center overflow-hidden">
+        <div className="flex">
+          {letters.map((l, i) => (
+            <motion.span
+              key={i}
+              variants={{
+                initial: { y: 0 },
+                hover: { y: "-110%" }
+              }}
+              transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1], delay: i * 0.02 }}
+              className="inline-block font-manrope text-[18px] md:text-[24px] font-black uppercase tracking-tight text-white leading-none whitespace-pre"
+            >
+              {l}
+            </motion.span>
+          ))}
+        </div>
+        
+        <div className="absolute inset-0 flex items-center">
+          {letters.map((l, i) => (
+            <motion.span
+              key={i}
+              variants={{
+                initial: { y: "110%" },
+                hover: { y: 0 }
+              }}
+              transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1], delay: i * 0.02 }}
+              className="inline-block font-manrope text-[18px] md:text-[24px] font-black uppercase tracking-tight text-white/40 leading-none whitespace-pre"
+            >
+              {l}
+            </motion.span>
+          ))}
+        </div>
+      </div>
+
+      <motion.div
+        variants={{
+          initial: { rotate: 0, x: 0, y: 0, scale: 1 },
+          hover: { rotate: 45, x: 2, y: -2, scale: 1.1 }
+        }}
+        transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
+        className="text-white pt-0.5"
+      >
+        <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5" strokeWidth={3} />
+      </motion.div>
+    </motion.a>
+  );
+};
 
 export default function ContactSection() {
-  const prefersReduced = useReducedMotion()
-  const [formState, setFormState] = useState("idle")
-  const [btnHover, setBtnHover] = useState(false)
-  const [form, setForm] = useState({ name: "", email: "", message: "" })
+  const prefersReduced = useReducedMotion();
+  const [formState, setFormState] = useState("idle");
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [btnHover, setBtnHover] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!form.name || !form.email || !form.message) return
+    e.preventDefault();
+    if (!form.name || !form.email || !form.message) {
+      toast.error("Please fill in all fields before sending.", {
+        style: {
+          background: "#1A1814",
+          color: "#FFFFFF",
+          fontFamily: "var(--font-manrope)",
+          fontSize: "12px",
+          fontWeight: 700,
+          borderRadius: "0px",
+          border: "1px solid rgba(246,61,24,0.3)"
+        }
+      });
+      return;
+    }
     
-    setFormState("sending")
+    setFormState("sending");
     try {
-      const response = await api.post("/contacts", form)
-      
+      const response = await api.post("/contacts", form);
       if (response.status === 201 || response.status === 200) {
-        setFormState("sent")
-        setForm({ name: "", email: "", message: "" })
-        setTimeout(() => setFormState("idle"), 3000)
+        setFormState("sent");
+        toast.success("Dialogue Initiated! I'll get back to you soon.", {
+          style: {
+            background: "#F63D18",
+            color: "#FFFFFF",
+            fontFamily: "var(--font-manrope)",
+            fontSize: "12px",
+            fontWeight: 700,
+            borderRadius: "0px"
+          }
+        });
+        setForm({ name: "", email: "", message: "" });
+        setTimeout(() => setFormState("idle"), 4000);
       } else {
-        throw new Error("Failed to send")
+        throw new Error("Failed to send");
       }
     } catch (error) {
-      setFormState("idle")
-      alert("Something went wrong. Please try again.")
+      setFormState("idle");
+      toast.error("System failure. Please try again or email directly.");
     }
-  }
+  };
+
+  const scrollTo = (id) => {
+    const el = document.getElementById(id.toLowerCase());
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
 
   const inputStyle = {
     width: "100%",
-    background: "white",
-    borderRadius: "12px",
-    border: "1px solid rgba(26,24,20,0.1)",
-    padding: "16px 20px",
-    fontSize: "15px",
-    fontFamily: "var(--font-dm-sans)",
-    fontWeight: 300,
+    background: "transparent",
+    borderBottom: "2px solid rgba(26,24,20,0.15)",
+    padding: "16px 0",
+    fontSize: "18px",
+    fontFamily: "var(--font-manrope)",
+    fontWeight: 500,
     color: "#1A1814",
     outline: "none",
-    transition: "border-color 200ms ease, box-shadow 200ms ease",
-  }
+    transition: "border-color 0.4s ease",
+  };
 
-  const labelStyle = {
-    display: "block",
-    fontFamily: "var(--font-dm-mono)",
-    fontSize: "10px",
-    color: "#B8B3AC",
-    letterSpacing: "0.15em",
-    textTransform: "uppercase",
-    marginBottom: "8px",
-  }
+  const ctaText = "SEND MESSAGE";
+  const hoverText = "LETS CONNECT";
 
   return (
-    <section
-      id="contact"
-      style={{
-        background: "var(--section-contact)",
-        padding: "120px clamp(24px, 5vw, 64px) 0",
-      }}
-    >
-      {/* Heading */}
-      <div className="mb-10">
+    <section id="contact" className="bg-white flex flex-col pt-32">
+      {/* Contact Header */}
+      <div className="px-6 md:px-16 mb-24">
+        {/* Accent Label */}
         <motion.p
-          className="font-dm-mono text-[#2D5A3D] uppercase mb-6"
+          className="font-dm-mono text-portfolio-accent uppercase mb-6"
           style={{ fontSize: "11px", letterSpacing: "0.2em", fontWeight: 700 }}
           initial={{ opacity: 0, x: -10 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          05 — Get In Touch
+          HAVE AN IDEA?? — LET&apos;S TALK
         </motion.p>
-        <div className="flex flex-col">
-          {["Got a project", "in mind?"].map((line, i) => (
-            <motion.h2
-              key={i}
-              className="font-playfair"
-              style={{
-                fontSize: "clamp(56px, 8vw, 110px)",
-                fontWeight: 900,
-                lineHeight: 1,
-                color: i === 0 ? "#1A1814" : "#2D5A3D",
-                display: "block"
-              }}
-              initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 30 }}
+
+        <motion.h2 
+          className="font-manrope font-black text-[12vw] leading-none tracking-[-0.05em] text-[#1A1814] uppercase"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        >
+          CONTACT
+        </motion.h2>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mt-20">
+          <div className="lg:col-span-5">
+            <p className="font-manrope text-xl text-[#6B6560] leading-relaxed font-light max-w-md">
+              I&apos;m currently available for freelance projects and full-time roles. If you&apos;re building something that needs to scale, let&apos;s talk.
+            </p>
+          </div>
+          
+          <div className="lg:col-span-7">
+            <motion.form
+              onSubmit={handleSubmit}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: i * 0.1, ease: [0.215, 0.61, 0.355, 1] }}
+              transition={{ duration: 0.8, delay: 0.2 }}
             >
-              {line}
-            </motion.h2>
-          ))}
-        </div>
-        <motion.p
-          className="font-dm-sans text-[#6B6560] mt-8"
-          style={{ fontSize: "18px", fontWeight: 300, maxWidth: "560px", lineHeight: 1.7 }}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          I&apos;m currently available for freelance projects and full-time roles. If you&apos;re building something that needs to scale, let&apos;s talk.
-        </motion.p>
-      </div>
+              <div className="flex flex-col gap-12">
+                <div className="group">
+                  <label className="block font-manrope text-[10px] font-bold uppercase tracking-[0.2em] text-[#B8B3AC] transition-colors group-focus-within:text-portfolio-accent">Name</label>
+                  <input
+                    type="text"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    style={inputStyle}
+                    placeholder="Your name"
+                    className="focus:border-portfolio-accent transition-colors"
+                  />
+                </div>
+                <div className="group">
+                  <label className="block font-manrope text-[10px] font-bold uppercase tracking-[0.2em] text-[#B8B3AC] transition-colors group-focus-within:text-portfolio-accent">Email</label>
+                  <input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    style={inputStyle}
+                    placeholder="your@email.com"
+                    className="focus:border-portfolio-accent transition-colors"
+                  />
+                </div>
+                <div className="group">
+                  <label className="block font-manrope text-[10px] font-bold uppercase tracking-[0.2em] text-[#B8B3AC] transition-colors group-focus-within:text-portfolio-accent">Message</label>
+                  <textarea
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    style={{ ...inputStyle, height: "100px", resize: "none" }}
+                    placeholder="Tell me about your project..."
+                    className="focus:border-portfolio-accent transition-colors"
+                  />
+                </div>
 
-      {/* Content row */}
-      <div className="flex flex-col lg:flex-row gap-16 pb-20">
-        {/* Left: info cards */}
-        <div style={{ flex: "0 0 35%", display: "flex", flexDirection: "column", gap: "16px" }}>
-          {[
-            { icon: <Mail size={20} color="#2D5A3D" />, label: "Email", value: "vikram@email.com" },
-            { icon: <MapPin size={20} color="#2D5A3D" />, label: "Location", value: "India — Remote Global" },
-            { icon: <Clock size={20} color="#2D5A3D" />, label: "Response", value: "Within 24 hours" },
-          ].map((card, i) => (
-            <motion.div
-              key={card.label}
-              style={{
-                background: "white",
-                borderRadius: "16px",
-                padding: "20px 24px",
-                border: "1px solid rgba(26,24,20,0.06)",
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-              }}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.5, delay: prefersReduced ? 0 : i * 0.1 }}
-            >
-              {card.icon}
-              <div>
-                <p className="font-dm-mono text-[#B8B3AC] uppercase" style={{ fontSize: "10px", letterSpacing: "0.15em" }}>{card.label}</p>
-                <p className="font-dm-sans text-[#1A1814] mt-1" style={{ fontSize: "14px", fontWeight: 500 }}>{card.value}</p>
-              </div>
-            </motion.div>
-          ))}
-
-          {/* Social links */}
-          <div className="flex flex-col gap-3 mt-4">
-            {[
-              { icon: <Github size={16} />, handle: "@vikram-dev", label: "GitHub" },
-              { icon: <Linkedin size={16} />, handle: "Vikram", label: "LinkedIn" },
-              { icon: <Twitter size={16} />, handle: "@vikram_builds", label: "Twitter" },
-            ].map((social) => (
-              <motion.a
-                key={social.label}
-                href="#"
-                aria-label={social.label}
-                className="font-dm-mono text-[#6B6560] hover:text-[#2D5A3D] flex items-center gap-3 transition-colors"
-                style={{ fontSize: "12px", textDecoration: "none" }}
-                whileHover={{ x: 6 }}
-                transition={{ duration: 0.2 }}
-              >
-                <span className="text-[#B8B3AC]">{social.icon}</span>
-                {social.handle}
-              </motion.a>
-            ))}
-          </div>
-        </div>
-
-        {/* Right: form */}
-        <motion.form
-          onSubmit={handleSubmit}
-          style={{ flex: 1 }}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          noValidate
-        >
-          <div className="flex flex-col gap-6">
-            <div>
-              <label htmlFor="contact-name" style={labelStyle}>Name</label>
-              <input
-                id="contact-name"
-                type="text"
-                placeholder="Your full name"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                style={inputStyle}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "rgba(45,90,61,0.4)"
-                  e.target.style.boxShadow = "0 0 0 4px rgba(45,90,61,0.08)"
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "rgba(26,24,20,0.1)"
-                  e.target.style.boxShadow = "none"
-                }}
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="contact-email" style={labelStyle}>Email</label>
-              <input
-                id="contact-email"
-                type="email"
-                placeholder="your@email.com"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                style={inputStyle}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "rgba(45,90,61,0.4)"
-                  e.target.style.boxShadow = "0 0 0 4px rgba(45,90,61,0.08)"
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "rgba(26,24,20,0.1)"
-                  e.target.style.boxShadow = "none"
-                }}
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="contact-message" style={labelStyle}>Message</label>
-              <textarea
-                id="contact-message"
-                placeholder="Tell me about your project..."
-                value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
-                style={{ ...inputStyle, height: "140px", resize: "none" }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "rgba(45,90,61,0.4)"
-                  e.target.style.boxShadow = "0 0 0 4px rgba(45,90,61,0.08)"
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "rgba(26,24,20,0.1)"
-                  e.target.style.boxShadow = "none"
-                }}
-                required
-              />
-            </div>
-
-            {/* Submit button */}
-            <motion.button
-              type="submit"
-              onMouseEnter={() => setBtnHover(true)}
-              onMouseLeave={() => setBtnHover(false)}
-              style={{
-                width: "100%",
-                height: "60px",
-                borderRadius: "12px",
-                background: formState === "sent" ? "#2D5A3D" : "#2D5A3D",
-                border: "none",
-                cursor: formState === "sending" ? "not-allowed" : "pointer",
-                overflow: "hidden",
-                position: "relative",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              whileHover={formState === "idle" ? { y: -2, boxShadow: "0 8px 32px rgba(45,90,61,0.25)", background: "#234A32" } : {}}
-              animate={formState === "sent" ? { scale: [1, 1.02, 1] } : {}}
-              transition={{ duration: 0.3 }}
-              disabled={formState !== "idle"}
-            >
-              <AnimatePresence mode="wait">
-                {formState === "idle" && (
+                {/* Hero-Style Staggered CTA - FIXED POSITIONING */}
+                <motion.button
+                  type="submit"
+                  onMouseEnter={() => setBtnHover(true)}
+                  onMouseLeave={() => setBtnHover(false)}
+                  disabled={formState !== "idle"}
+                  className="w-full h-16 bg-portfolio-accent relative overflow-hidden group border-none cursor-pointer"
+                  style={{ willChange: "transform" }}
+                >
                   <motion.div
-                    key="idle"
-                    style={{ position: "absolute", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "60px" }}
-                    initial={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    <motion.span
-                      className="font-dm-sans text-[#FAF8F4]"
-                      style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "0.05em", display: "block" }}
-                      animate={btnHover ? { y: "-130%" } : { y: "0%" }}
-                      transition={{ duration: 0.26, ease: [0.76, 0, 0.24, 1] }}
-                    >
-                      Send Message →
-                    </motion.span>
-                    <motion.span
-                      className="font-dm-sans text-[#FAF8F4]"
-                      style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "0.05em", position: "absolute" }}
-                      initial={{ y: "130%" }}
-                      animate={btnHover ? { y: "0%" } : { y: "130%" }}
-                      transition={{ duration: 0.26, ease: [0.76, 0, 0.24, 1] }}
-                    >
-                      Let&apos;s Work Together
-                    </motion.span>
-                  </motion.div>
-                )}
-                {formState === "sending" && (
-                  <motion.div
-                    key="sending"
-                    className="flex items-center gap-1"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    <span className="font-dm-sans text-[#FAF8F4]" style={{ fontSize: "15px", fontWeight: 300 }}>Sending</span>
-                    {[0, 1, 2].map((i) => (
-                      <motion.span
-                        key={i}
-                        className="text-[#FAF8F4]"
-                        style={{ fontSize: "15px" }}
-                        animate={{ opacity: [0, 1, 0] }}
-                        transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                    className="absolute inset-0 bg-[#1A1814]"
+                    initial={{ x: "-100%" }}
+                    animate={btnHover ? { x: 0 } : { x: "-100%" }}
+                    transition={{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }}
+                  />
+
+                  <AnimatePresence mode="wait">
+                    {formState === "idle" ? (
+                      <div className="relative flex items-center justify-center gap-4 w-full h-full z-10">
+                        {/* Text Container */}
+                        <div className="relative h-5 overflow-hidden">
+                          {/* Layer 1: SEND MESSAGE */}
+                          <div className="flex">
+                            {ctaText.split("").map((char, i) => (
+                              <motion.span
+                                key={i}
+                                className="font-manrope text-[14px] font-black uppercase tracking-widest text-white inline-block"
+                                animate={btnHover ? { y: "-150%" } : { y: "0%" }}
+                                transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1], delay: i * 0.02 }}
+                              >
+                                {char === " " ? "\u00A0" : char}
+                              </motion.span>
+                            ))}
+                          </div>
+                          
+                          {/* Layer 2: LETS CONNECT TOGETHER (Now perfectly centered relative to text container) */}
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            {hoverText.split("").map((char, i) => (
+                              <motion.span
+                                key={i}
+                                className="font-manrope text-[14px] font-black uppercase tracking-widest text-portfolio-accent inline-block"
+                                initial={{ y: "150%" }}
+                                animate={btnHover ? { y: "0%" } : { y: "150%" }}
+                                transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1], delay: i * 0.02 }}
+                              >
+                                {char === " " ? "\u00A0" : char}
+                              </motion.span>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {/* Staggered Arrow Animation - Always to the right of text */}
+                        <div className="h-5 overflow-hidden relative w-5 flex-shrink-0">
+                          <motion.div
+                            animate={btnHover ? { y: "-150%", rotate: 45 } : { y: "0%", rotate: 0 }}
+                            transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
+                            className="text-white"
+                          >
+                            <ArrowUpRight size={18} strokeWidth={3} />
+                          </motion.div>
+                          <motion.div
+                            className="absolute inset-0 text-portfolio-accent"
+                            initial={{ y: "150%", rotate: 45 }}
+                            animate={btnHover ? { y: "0%", rotate: 45 } : { y: "150%", rotate: 45 }}
+                            transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
+                          >
+                            <ArrowUpRight size={18} strokeWidth={3} />
+                          </motion.div>
+                        </div>
+                      </div>
+                    ) : (
+                      <motion.div
+                        key={formState}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="relative z-10 flex items-center justify-center gap-3 text-white font-manrope font-black tracking-widest"
                       >
-                        .
-                      </motion.span>
-                    ))}
-                  </motion.div>
-                )}
-                {formState === "sent" && (
-                  <motion.span
-                    key="sent"
-                    className="font-dm-sans text-[#FAF8F4]"
-                    style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "0.05em" }}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    Message Sent ✓
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.button>
-          </div>
-        </motion.form>
-      </div>
-
-      {/* Footer */}
-      <div style={{ borderTop: "1px solid rgba(26,24,20,0.08)", padding: "32px 0" }}>
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="font-dm-mono text-[#B8B3AC]" style={{ fontSize: "11px" }}>
-            &copy; 2025 Vikram — Designed and Built from scratch
-          </span>
-          <div className="flex items-center gap-5">
-            {[
-              { icon: <Github size={18} />, label: "GitHub" },
-              { icon: <Linkedin size={18} />, label: "LinkedIn" },
-              { icon: <Twitter size={18} />, label: "Twitter" },
-            ].map((s) => (
-              <motion.a
-                key={s.label}
-                href="#"
-                aria-label={s.label}
-                className="text-[#B8B3AC] hover:text-[#2D5A3D] transition-colors"
-                whileHover={{ scale: 1.1 }}
-                transition={{ duration: 0.2 }}
-              >
-                {s.icon}
-              </motion.a>
-            ))}
+                        {formState === "sending" ? "INITIATING..." : "DIALOGUE OPENED ✓"}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+              </div>
+            </motion.form>
           </div>
         </div>
       </div>
+
+      {/* NEW STUDIO FOOTER */}
+      <footer className="bg-portfolio-accent text-white py-24 px-6 md:px-16 mt-20 relative overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-start relative z-10">
+          
+          <div className="flex flex-col gap-16">
+            <div className="space-y-4">
+              <span className="block font-manrope text-[10px] font-black uppercase tracking-[0.3em] opacity-50">Drop me a line</span>
+              <a href="mailto:vikram517879@gmail.com" className="font-manrope text-[6vw] md:text-[3.5vw] font-black tracking-tighter hover:opacity-70 transition-opacity">
+                vikram517879@gmail.com
+              </a>
+            </div>
+            
+            <div className="flex flex-col gap-6">
+              <span className="block font-manrope text-[10px] font-black uppercase tracking-[0.3em] opacity-50">Socials</span>
+              <div className="flex flex-col items-start gap-4">
+                <FooterLink title="LINKEDIN" href="https://www.linkedin.com/in/vsvikram18/" icon={Linkedin} />
+                <FooterLink title="GITHUB" href="https://github.com/vikramvicky-1" icon={Github} />
+                <FooterLink title="INSTAGRAM" href="https://www.instagram.com/__vikram.vicky__" icon={Instagram} />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:items-end gap-16">
+            <div className="flex flex-col gap-6 md:items-end">
+              <span className="block font-manrope text-[10px] font-black uppercase tracking-[0.3em] opacity-50">Navigation</span>
+              <div className="flex flex-col md:items-end gap-4">
+                <FooterLink title="WORK" onClick={() => scrollTo("work")} />
+                <FooterLink title="SKILLS" onClick={() => scrollTo("skills")} />
+                <FooterLink title="ABOUT" onClick={() => scrollTo("about")} />
+                <FooterLink title="CONTACT" onClick={() => scrollTo("contact")} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-40 pt-10 border-t border-white/10 flex items-end justify-between relative z-10">
+          <motion.h2 
+            className="font-manrope font-black text-[20vw] leading-[0.7] tracking-[-0.08em] opacity-10 pointer-events-none select-none absolute -bottom-[5vw] -left-[2vw]"
+          >
+            VIKRAM
+          </motion.h2>
+          
+          <div className="ml-auto flex flex-col items-end gap-2">
+             <span className="font-manrope text-[10px] font-black tracking-widest opacity-60 uppercase">© 2025 ALL RIGHTS RESERVED</span>
+             <span className="font-manrope text-sm md:text-base font-black tracking-tighter">Vikram — Portfolio Edition 2.0</span>
+          </div>
+        </div>
+
+        <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-white opacity-[0.03] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      </footer>
     </section>
-  )
+  );
 }

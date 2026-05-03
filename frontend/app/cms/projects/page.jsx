@@ -73,13 +73,13 @@ export default function ProjectsManagementPage() {
             placeholder="Search projects..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white border border-black/[0.05] rounded-2xl pl-12 pr-4 py-3 font-dm-sans text-sm focus:outline-none focus:border-[#2D5A3D]/40 transition-all shadow-sm"
+            className="w-full bg-white border border-black/[0.05] rounded-2xl pl-12 pr-4 py-3 font-dm-sans text-sm focus:outline-none focus:border-portfolio-accent/40 transition-all shadow-sm"
           />
         </div>
         <div className="flex gap-3">
           <button 
             onClick={openAddModal}
-            className="flex items-center gap-2 bg-[#2D5A3D] text-white px-6 py-3 rounded-2xl text-sm font-dm-sans font-bold hover:bg-[#234730] transition-all shadow-lg shadow-[#2D5A3D]/20"
+            className="flex items-center gap-2 bg-portfolio-accent text-white px-6 py-3 rounded-2xl text-sm font-dm-sans font-bold hover:bg-[#234730] transition-all shadow-lg shadow-[#2D5A3D]/20"
           >
             <Plus size={18} />
             Add Project
@@ -186,7 +186,7 @@ function ProjectCard({ project, onEdit, onDelete }) {
             <h3 className="font-dm-sans font-bold text-[#1A1814] text-lg truncate pr-4">{project.title}</h3>
             <div className="flex items-center gap-1">
               {project.featured && <Star size={16} className="text-amber-400 fill-amber-400" />}
-              <button onClick={onEdit} className="p-2 text-[#B8B3AC] hover:text-[#2D5A3D] hover:bg-[#2D5A3D]/5 rounded-lg transition-all"><Edit2 size={16} /></button>
+              <button onClick={onEdit} className="p-2 text-[#B8B3AC] hover:text-portfolio-accent hover:bg-portfolio-accent/5 rounded-lg transition-all"><Edit2 size={16} /></button>
               <button onClick={onDelete} className="p-2 text-[#B8B3AC] hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"><Trash2 size={16} /></button>
             </div>
           </div>
@@ -208,7 +208,7 @@ function ProjectCard({ project, onEdit, onDelete }) {
 
           <div className="flex gap-4">
             {project.liveLink && (
-              <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[11px] font-dm-mono uppercase tracking-widest text-[#2D5A3D] font-bold hover:underline">
+              <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[11px] font-dm-mono uppercase tracking-widest text-portfolio-accent font-bold hover:underline">
                 Live <ExternalLink size={12} />
               </a>
             )}
@@ -317,12 +317,12 @@ function ProjectModal({ project, onClose, onSubmit }) {
             {/* Banner Upload */}
             <div className="space-y-4">
               <label className="font-dm-sans text-[11px] uppercase tracking-[0.2em] text-[#B8B3AC] font-bold ml-1">Project Banner</label>
-              <div className="relative group cursor-pointer h-64 rounded-[32px] overflow-hidden border-2 border-dashed border-black/[0.05] hover:border-[#2D5A3D]/40 transition-all bg-[#FAF8F4]">
+              <div className="relative group cursor-pointer h-64 rounded-[32px] overflow-hidden border-2 border-dashed border-black/[0.05] hover:border-portfolio-accent/40 transition-all bg-[#FAF8F4]">
                 {imagePreview ? (
                   <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center gap-4">
-                    <div className="w-16 h-16 rounded-3xl bg-white flex items-center justify-center text-[#2D5A3D] shadow-sm">
+                    <div className="w-16 h-16 rounded-3xl bg-white flex items-center justify-center text-portfolio-accent shadow-sm">
                       <Upload size={28} />
                     </div>
                     <div className="text-center">
@@ -353,7 +353,7 @@ function ProjectModal({ project, onClose, onSubmit }) {
                   required
                   value={formData.title}
                   onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-2xl px-6 py-4 font-dm-sans text-[#1A1814] focus:outline-none focus:border-[#2D5A3D]/40 transition-all"
+                  className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-2xl px-6 py-4 font-dm-sans text-[#1A1814] focus:outline-none focus:border-portfolio-accent/40 transition-all"
                   placeholder="E.g. Nexus Dashboard"
                 />
               </div>
@@ -379,7 +379,7 @@ function ProjectModal({ project, onClose, onSubmit }) {
                         placeholder="e.g. 2024"
                         value={formData.year}
                         onChange={(e) => setFormData({...formData, year: e.target.value})}
-                        className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-xl px-4 py-3 font-dm-sans text-sm font-bold text-[#1A1814] focus:outline-none focus:border-[#2D5A3D]/30 transition-all"
+                        className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-xl px-4 py-3 font-dm-sans text-sm font-bold text-[#1A1814] focus:outline-none focus:border-portfolio-accent/30 transition-all"
                       />
                     </div>
                   </div>
@@ -389,27 +389,27 @@ function ProjectModal({ project, onClose, onSubmit }) {
                     onClick={() => setFormData({...formData, featured: !formData.featured})}
                     className={`flex items-center justify-between p-4 lg:p-5 rounded-2xl cursor-pointer transition-all border ${
                       formData.featured 
-                        ? "bg-[#2D5A3D]/5 border-[#2D5A3D]/20 shadow-sm shadow-[#2D5A3D]/5" 
+                        ? "bg-portfolio-accent/5 border-portfolio-accent/20 shadow-sm shadow-[#2D5A3D]/5" 
                         : "bg-[#FAF8F4] border-black/[0.05] hover:bg-black/[0.02]"
                     }`}
                   >
                     <div className="flex items-center gap-4">
                       <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
-                        formData.featured ? "bg-[#2D5A3D] text-white shadow-lg shadow-[#2D5A3D]/20" : "bg-white text-[#B8B3AC]"
+                        formData.featured ? "bg-portfolio-accent text-white shadow-lg shadow-[#2D5A3D]/20" : "bg-white text-[#B8B3AC]"
                       }`}>
                         <Star size={20} className={formData.featured ? "fill-white" : ""} />
                       </div>
                       <div className="flex flex-col">
                         <span className="font-dm-sans text-[15px] text-[#1A1814] font-bold">Featured Spotlight</span>
                         <p className={`text-[11px] font-dm-sans transition-colors ${
-                          formData.featured ? "text-[#2D5A3D]/70" : "text-[#B8B3AC]"
+                          formData.featured ? "text-portfolio-accent/70" : "text-[#B8B3AC]"
                         }`}>
                           Promote to the hero section (overrides current featured)
                         </p>
                       </div>
                     </div>
                     <div className={`w-12 h-6 rounded-full relative transition-all duration-300 ${
-                      formData.featured ? "bg-[#2D5A3D]" : "bg-[#E8E4DF]"
+                      formData.featured ? "bg-portfolio-accent" : "bg-[#E8E4DF]"
                     }`}>
                       <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-300 ${
                         formData.featured ? "left-7" : "left-1"
@@ -428,7 +428,7 @@ function ProjectModal({ project, onClose, onSubmit }) {
                 rows={4}
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-3xl px-6 py-4 font-dm-sans text-[#1A1814] focus:outline-none focus:border-[#2D5A3D]/40 transition-all resize-none text-base"
+                className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-3xl px-6 py-4 font-dm-sans text-[#1A1814] focus:outline-none focus:border-portfolio-accent/40 transition-all resize-none text-base"
                 placeholder="Describe your project, the challenges, and your role..."
               />
             </div>
@@ -438,7 +438,7 @@ function ProjectModal({ project, onClose, onSubmit }) {
               <label className="font-dm-sans text-[11px] uppercase tracking-[0.2em] text-[#B8B3AC] font-bold ml-1">Tech Stack</label>
               <div className="flex flex-wrap gap-3 min-h-[64px] p-4 rounded-[32px] border border-black/[0.05] bg-[#FAF8F4]">
                 {formData.techStack.map((tech, i) => (
-                  <span key={i} className="flex items-center gap-2.5 bg-white border border-black/[0.05] px-5 py-2.5 rounded-2xl font-dm-sans text-sm font-bold text-[#1A1814] shadow-sm hover:border-[#2D5A3D]/20 transition-all">
+                  <span key={i} className="flex items-center gap-2.5 bg-white border border-black/[0.05] px-5 py-2.5 rounded-2xl font-dm-sans text-sm font-bold text-[#1A1814] shadow-sm hover:border-portfolio-accent/20 transition-all">
                     {tech}
                     <button type="button" onClick={() => removeTech(i)} className="text-[#B8B3AC] hover:text-red-500 transition-colors p-0.5">
                       <X size={16} />
@@ -464,7 +464,7 @@ function ProjectModal({ project, onClose, onSubmit }) {
                   <input 
                     value={formData.liveLink}
                     onChange={(e) => setFormData({...formData, liveLink: e.target.value})}
-                    className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-2xl pl-12 pr-4 py-4 font-dm-sans text-sm text-[#1A1814] focus:outline-none focus:border-[#2D5A3D]/40 transition-all"
+                    className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-2xl pl-12 pr-4 py-4 font-dm-sans text-sm text-[#1A1814] focus:outline-none focus:border-portfolio-accent/40 transition-all"
                     placeholder="https://your-site.com"
                   />
                 </div>
@@ -476,7 +476,7 @@ function ProjectModal({ project, onClose, onSubmit }) {
                   <input 
                     value={formData.githubLink}
                     onChange={(e) => setFormData({...formData, githubLink: e.target.value})}
-                    className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-2xl pl-12 pr-4 py-4 font-dm-sans text-sm text-[#1A1814] focus:outline-none focus:border-[#2D5A3D]/40 transition-all"
+                    className="w-full bg-[#FAF8F4] border border-black/[0.05] rounded-2xl pl-12 pr-4 py-4 font-dm-sans text-sm text-[#1A1814] focus:outline-none focus:border-portfolio-accent/40 transition-all"
                     placeholder="https://github.com/your-repo"
                   />
                 </div>
@@ -498,7 +498,7 @@ function ProjectModal({ project, onClose, onSubmit }) {
             form="project-form"
             type="submit"
             disabled={isLoading}
-            className="bg-[#2D5A3D] text-white px-10 py-4 rounded-2xl flex items-center gap-3 font-dm-sans font-bold text-sm shadow-[0_12px_24px_rgba(45,90,61,0.25)] hover:bg-[#234730] disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98]"
+            className="bg-portfolio-accent text-white px-10 py-4 rounded-2xl flex items-center gap-3 font-dm-sans font-bold text-sm shadow-[0_12px_24px_rgba(45,90,61,0.25)] hover:bg-[#234730] disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98]"
           >
             {isLoading ? <Loader2 className="animate-spin" size={20} /> : project ? "Save Changes" : "Create Project"}
           </button>

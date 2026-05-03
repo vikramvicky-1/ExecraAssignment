@@ -4,29 +4,34 @@ import { useRef, useState, useEffect } from "react"
 import { motion, useInView, useReducedMotion } from "framer-motion"
 import useContentStore from "@/store/useContentStore"
 
-const ORBIT_TECHS = [
-  { name: "React", pct: 92, color: "#61DAFB", symbol: "Re" },
-  { name: "Next.js", pct: 88, color: "#000000", symbol: "N." },
-  { name: "Node.js", pct: 85, color: "#339933", symbol: "No" },
-  { name: "MongoDB", pct: 80, color: "#47A248", symbol: "Mg" },
-  { name: "TypeScript", pct: 78, color: "#3178C6", symbol: "TS" },
-  { name: "Express", pct: 87, color: "#404040", symbol: "Ex" },
-]
-
-const SUPPORTING = [
-  "REST APIs", "GraphQL", "Redis", "Docker", "Git", "Vercel", "AWS",
-  "Socket.io", "Prisma", "PostgreSQL", "TailwindCSS", "Framer Motion",
-  "Jest", "Linux", "Webpack", "Supabase", "GitHub Actions",
-]
-
-const LEARNING_MARQUEE = "Rust · WebGL Shaders · Edge Computing · LLM Fine-Tuning · System Design at Scale · tRPC · Bun Runtime · "
+const getLogoUrl = (name) => {
+  const slug = name.toLowerCase()
+    .replace(/\.js/g, 'js')
+    .replace(/\s+/g, '')
+    .replace(/nextjs/g, 'nextdotjs')
+    .replace(/nodejs/g, 'nodedotjs')
+    .replace(/vuejs/g, 'vuedotjs')
+    .replace(/socket\.io/g, 'socketdotio')
+    .replace(/three\.js/g, 'threedotjs')
+  return `https://cdn.simpleicons.org/${slug}`
+}
 
 function SkillBar({ tech, pct, index, inView }) {
   const prefersReduced = useReducedMotion()
   return (
     <div style={{ marginBottom: "28px" }}>
       <div className="flex justify-between items-center mb-2">
-        <span className="font-dm-sans text-[#1A1814]" style={{ fontSize: "14px", fontWeight: 500 }}>{tech}</span>
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 flex items-center justify-center p-1 bg-white rounded-lg shadow-sm border border-black/[0.03]">
+            <img 
+              src={getLogoUrl(tech)} 
+              alt="" 
+              className="w-full h-full object-contain opacity-70 group-hover:opacity-100 transition-opacity"
+              onError={(e) => e.target.style.display = 'none'}
+            />
+          </div>
+          <span className="font-dm-sans text-[#1A1814]" style={{ fontSize: "14px", fontWeight: 500 }}>{tech}</span>
+        </div>
         <span className="font-dm-mono text-[#B8B3AC]" style={{ fontSize: "11px" }}>{pct}%</span>
       </div>
       <div
@@ -42,7 +47,7 @@ function SkillBar({ tech, pct, index, inView }) {
         <motion.div
           style={{
             height: "100%",
-            background: "linear-gradient(90deg, #2D5A3D, #4A8B5C)",
+            background: "linear-gradient(90deg, #F63D18, #FF6B4A)",
             borderRadius: "100px",
           }}
           initial={{ width: 0 }}
@@ -113,6 +118,7 @@ function OrbitDisplay({ techs }) {
                 justifyContent: "center",
                 cursor: "pointer",
                 zIndex: 10,
+                padding: "16px"
               }}
               animate={prefersReduced ? {} : { rotate: -360 }}
               transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
@@ -120,12 +126,14 @@ function OrbitDisplay({ techs }) {
               onHoverStart={() => setHoveredTech(tech.name)}
               onHoverEnd={() => setHoveredTech(null)}
             >
-              <span
-                className="font-dm-mono font-bold"
-                style={{ fontSize: "13px", color: tech.color, letterSpacing: "0.05em" }}
-              >
-                {tech.symbol}
-              </span>
+              <img 
+                src={getLogoUrl(tech.name)} 
+                alt={tech.name} 
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  e.target.src = `https://ui-avatars.com/api/?name=${tech.name}&background=random`
+                }}
+              />
 
               {/* Tooltip */}
               {hoveredTech === tech.name && (
@@ -148,7 +156,7 @@ function OrbitDisplay({ techs }) {
                   transition={{ duration: 0.15 }}
                 >
                   <p className="font-dm-sans text-[#1A1814]" style={{ fontSize: "13px", fontWeight: 500 }}>{tech.name}</p>
-                  <p className="font-dm-mono text-[#2D5A3D]" style={{ fontSize: "11px" }}>{tech.pct}%</p>
+                  <p className="font-dm-mono text-portfolio-accent" style={{ fontSize: "11px" }}>{tech.pct}%</p>
                 </motion.div>
               )}
             </motion.div>
@@ -187,7 +195,7 @@ function SectionHeading({ label, title }) {
   return (
     <div className="mb-16">
       <motion.p
-        className="font-dm-mono text-[#2D5A3D] uppercase mb-4"
+        className="font-dm-mono text-portfolio-accent uppercase mb-4"
         style={{ fontSize: "11px", letterSpacing: "0.2em", fontWeight: 700 }}
         initial={{ opacity: 0, x: -10 }}
         whileInView={{ opacity: 1, x: 0 }}
@@ -200,11 +208,12 @@ function SectionHeading({ label, title }) {
         {titleArray.map((line, i) => (
           <motion.h2
             key={i}
-            className="font-playfair text-[#1A1814]"
+            className="font-manrope text-[#1A1814] uppercase"
             style={{ 
               fontSize: "clamp(64px, 9vw, 130px)", 
-              fontWeight: 800, 
-              lineHeight: 1,
+              fontWeight: 900, 
+              lineHeight: 0.9,
+              letterSpacing: "-0.05em",
               display: "block"
             }}
             initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 30 }}
@@ -231,12 +240,12 @@ export default function SkillsSection() {
   }, [fetchContent])
 
   const majorSkills = content?.skills?.major || [
-    { name: "React", pct: 92, color: "#61DAFB", symbol: "Re" },
-    { name: "Next.js", pct: 88, color: "#000000", symbol: "N." },
-    { name: "Node.js", pct: 85, color: "#339933", symbol: "No" },
-    { name: "MongoDB", pct: 80, color: "#47A248", symbol: "Mg" },
-    { name: "TypeScript", pct: 78, color: "#3178C6", symbol: "TS" },
-    { name: "Express", pct: 87, color: "#404040", symbol: "Ex" },
+    { name: "React", pct: 92 },
+    { name: "Next.js", pct: 88 },
+    { name: "Node.js", pct: 85 },
+    { name: "MongoDB", pct: 80 },
+    { name: "TypeScript", pct: 78 },
+    { name: "Express", pct: 87 },
   ]
 
   const minorSkills = content?.skills?.minor || [
@@ -256,19 +265,20 @@ export default function SkillsSection() {
     <section
       id="skills"
       style={{
-        background: "var(--section-skills)",
         padding: "120px clamp(24px, 5vw, 64px)",
       }}
     >
-      <SectionHeading label="03 — Technical Skills" title={["The", "Arsenal."]} />
+      <SectionHeading label="ENGINEERING CORE — FORGED IN CODE" title={["Technical", "Arsenal."]} />
 
       {/* Sub-layout 1+2: orbit + bars */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-20">
         {/* Orbit */}
-        <OrbitDisplay techs={majorSkills} />
+        <div className="gsap-scrub-up">
+          <OrbitDisplay techs={majorSkills} />
+        </div>
 
         {/* Skill bars */}
-        <div ref={barsRef} className="flex flex-col justify-center">
+        <div ref={barsRef} className="flex flex-col justify-center gsap-scrub-up">
           {majorSkills.map((tech, i) => (
             <SkillBar key={tech.name} tech={tech.name} pct={tech.pct} index={i} inView={barsInView} />
           ))}
@@ -289,7 +299,7 @@ export default function SkillsSection() {
         {minorSkills.map((pill) => (
           <motion.span
             key={pill}
-            className="font-dm-mono text-[#6B6560] hover:text-[#2D5A3D] cursor-default"
+            className="font-dm-mono text-[#6B6560] hover:text-portfolio-accent cursor-default"
             style={{
               fontSize: "11px",
               padding: "8px 20px",
@@ -331,7 +341,7 @@ export default function SkillsSection() {
         transition={{ duration: 0.6 }}
       >
         <span
-          className="font-dm-mono text-[#2D5A3D] uppercase whitespace-nowrap flex-shrink-0"
+          className="font-dm-mono text-portfolio-accent uppercase whitespace-nowrap flex-shrink-0"
           style={{ fontSize: "11px", letterSpacing: "0.15em" }}
         >
           // Currently Exploring

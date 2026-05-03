@@ -10,8 +10,6 @@ const MARQUEE_TOKENS = [
   "·",
   "NEXT.JS",
   "·",
-  "VIKRAM",
-  "·",
   "REAL-TIME SYSTEMS",
   "·",
   "NODE.JS",
@@ -22,8 +20,8 @@ const MARQUEE_TOKENS = [
   "·",
 ]
 
-const ACCENT = "#2D5A3D"
-const ACCENT_TOKENS = ["VIKRAM", "REACT"]
+const ACCENT = "#F63D18"
+const ACCENT_TOKENS = ["REACT", "NEXT.JS"]
 
 function MarqueeRow({ direction }) {
   const prefersReduced = useReducedMotion()
@@ -35,10 +33,11 @@ function MarqueeRow({ direction }) {
         {MARQUEE_TOKENS.map((token, i) => (
           <span
             key={i}
-            className="font-playfair italic whitespace-nowrap"
+            className="font-manrope uppercase"
             style={{
               fontSize: "clamp(48px, 6vw, 80px)",
-              fontWeight: 700,
+              fontWeight: 900,
+              letterSpacing: "-0.04em",
               color: ACCENT_TOKENS.includes(token)
                 ? ACCENT
                 : i % 3 === 0
@@ -68,11 +67,12 @@ function MarqueeRow({ direction }) {
         {tokens.map((token, i) => (
           <span
             key={i}
-            className="font-playfair italic"
+            className="font-manrope uppercase"
             style={{
               fontSize: "clamp(48px, 6vw, 80px)",
-              fontWeight: 700,
+              fontWeight: 900,
               lineHeight: 1,
+              letterSpacing: "-0.04em",
               color: ACCENT_TOKENS.includes(token)
                 ? ACCENT
                 : i % 3 === 0
@@ -101,11 +101,12 @@ export default function MarqueeSection() {
       id="marquee"
       aria-hidden="true"
       style={{
-        background: "var(--section-marquee)",
         borderTop: "1px solid rgba(26,24,20,0.08)",
         borderBottom: "1px solid rgba(26,24,20,0.08)",
         padding: "28px 0",
         overflow: "hidden",
+        width: "100%",
+        maxWidth: "100vw",
       }}
     >
       <MarqueeRow direction={1} />
