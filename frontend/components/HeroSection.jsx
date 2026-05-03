@@ -9,7 +9,7 @@ import {
   useReducedMotion,
   useSpring,
 } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
 import useContentStore from "@/store/useContentStore";
 import StudioBackground from "./StudioBackground";
 
@@ -298,30 +298,18 @@ const HeroSection = ({ visible, activeSection }) => {
   };
 
   const HamburgerIcon = ({ isOpen }) => (
-    <div className="w-8 h-6 flex flex-col justify-between relative cursor-pointer">
-      <motion.span
-        animate={
-          isOpen
-            ? { rotate: 45, y: 10, backgroundColor: "#1A1814" }
-            : { rotate: 0, y: 0, backgroundColor: "#1A1814" }
-        }
-        className="w-full h-[3px] block origin-center rounded-full"
+    <div className="relative w-8 h-8 flex flex-col items-center justify-center gap-[5px] group focus:outline-none">
+      <motion.div 
+        animate={isOpen ? { rotate: 45, y: 7, width: "24px" } : { rotate: 0, y: 0, width: "32px" }}
+        className="h-[2px] bg-[#1A1814] origin-center transition-all duration-500"
       />
-      <motion.span
-        animate={
-          isOpen
-            ? { opacity: 0, x: -10 }
-            : { opacity: 1, x: 0, backgroundColor: "#1A1814" }
-        }
-        className="w-3/4 h-[3px] block rounded-full ml-auto"
+      <motion.div 
+        animate={isOpen ? { opacity: 0, x: 20 } : { opacity: 1, x: 0 }}
+        className="h-[2px] w-[20px] bg-[#1A1814] self-end transition-all duration-500"
       />
-      <motion.span
-        animate={
-          isOpen
-            ? { rotate: -45, y: -11, backgroundColor: "#1A1814" }
-            : { rotate: 0, y: 0, backgroundColor: "#1A1814" }
-        }
-        className="w-full h-[3px] block origin-center rounded-full"
+      <motion.div 
+        animate={isOpen ? { rotate: -45, y: -7, width: "24px" } : { rotate: 0, y: 0, width: "28px" }}
+        className="h-[2px] bg-[#1A1814] origin-center transition-all duration-500"
       />
     </div>
   );
@@ -341,7 +329,7 @@ const HeroSection = ({ visible, activeSection }) => {
 
       {/* HEADER */}
       <motion.header
-        className="fixed top-0 left-0 right-0 z-[2000] flex items-center justify-between px-6 md:px-12 h-16 md:h-24 pointer-events-none transition-all duration-300"
+        className="fixed top-0 left-0 right-0 z-[4000] flex items-center justify-between px-6 md:px-12 h-16 md:h-24 pointer-events-none transition-all duration-300"
       >
         <motion.div
           style={{
@@ -488,28 +476,113 @@ const HeroSection = ({ visible, activeSection }) => {
       {/* MOBILE MENU */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ y: "-100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "-100%" }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-[1500] bg-[#FAF8F4] flex flex-col justify-center px-6 md:px-12"
-          >
-            <div className="flex flex-col gap-4">
-              {NAV_LINKS.map((link, i) => (
-                <motion.button
-                  key={link}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 + i * 0.1, duration: 0.8 }}
-                  onClick={() => scrollTo(link)}
-                  className={`font-manrope text-[18vw] font-black text-left uppercase tracking-tighter hover:text-portfolio-accent transition-colors leading-[0.8] ${activeSection === link ? "text-portfolio-accent" : "text-[#1A1814]"}`}
-                >
-                  {link}
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
+          <>
+            {/* Dark Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 bg-black/10 z-[2999] backdrop-blur-sm"
+            />
+            
+            <motion.div
+              initial={{ x: "100%", skewX: "5deg" }}
+              animate={{ x: 0, skewX: 0 }}
+              exit={{ x: "100%", skewX: "-5deg" }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed inset-y-0 right-0 w-full md:w-[60vw] z-[3000] bg-[#FAF8F4] flex flex-col shadow-2xl p-8 md:p-24 overflow-hidden"
+            >
+              {/* Menu Label */}
+              <div className="absolute top-1/2 -left-20 -translate-y-1/2 rotate-90 hidden lg:block pointer-events-none">
+                <span className="font-dm-sans text-[10px] font-black uppercase tracking-[0.5em] opacity-10">NAVIGATION MENU</span>
+              </div>
+
+              <div className="flex flex-col gap-6 mt-32">
+                <span className="font-dm-sans text-[10px] font-black uppercase tracking-[0.3em] text-[#1A1814]/30 mb-4">Selection</span>
+                
+                {NAV_LINKS.map((link, i) => {
+                  const isActive = activeSection === link.toLowerCase();
+                  return (
+                    <div key={link} className="flex items-center group overflow-hidden">
+                      <motion.button
+                        onClick={() => scrollTo(link)}
+                        className={`flex items-center gap-6 transition-all duration-500 uppercase text-left relative ${isActive ? 'text-portfolio-accent' : 'text-[#1A1814]'}`}
+                        style={{ 
+                          fontSize: "clamp(48px, 12vw, 96px)", 
+                          fontWeight: 900, 
+                          background: "none", 
+                          border: "none", 
+                          cursor: "pointer", 
+                          letterSpacing: "-0.04em", 
+                          lineHeight: 1,
+                          fontFamily: "var(--font-universo)"
+                        }}
+                      >
+                        <span className="relative block overflow-hidden">
+                          <motion.span
+                            className="block"
+                            initial={{ y: "110%" }}
+                            animate={{ y: 0 }}
+                            transition={{ 
+                              delay: 0.3 + i * 0.1, 
+                              duration: 0.8, 
+                              ease: [0.16, 1, 0.3, 1] 
+                            }}
+                          >
+                            {link}
+                          </motion.span>
+                        </span>
+                        
+                        <motion.div 
+                          className="transition-all duration-500"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ 
+                            opacity: isActive ? 1 : 0.2, 
+                            x: 0 
+                          }}
+                          transition={{ delay: 0.6 + i * 0.1 }}
+                        >
+                          <ArrowUpRight size={isMobile ? 32 : 48} strokeWidth={4} />
+                        </motion.div>
+                      </motion.button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-auto pt-12 border-t border-black/5 grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="space-y-6">
+                  <p className="font-dm-sans text-[10px] font-black uppercase tracking-[0.3em] opacity-30">Inquiries</p>
+                  <a href="mailto:vikram517879@gmail.com" className="font-manrope text-xl font-bold hover:text-portfolio-accent transition-colors block">
+                    vikram517879@gmail.com
+                  </a>
+                </div>
+                <div className="space-y-6">
+                  <p className="font-dm-sans text-[10px] font-black uppercase tracking-[0.3em] opacity-30">Connect</p>
+                  <div className="flex gap-8">
+                    {["LinkedIn", "GitHub", "Instagram"].map((social, i) => (
+                      <motion.a 
+                        key={social}
+                        href="#"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.8 + i * 0.1 }}
+                        className="font-dm-sans text-[10px] font-black uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-portfolio-accent transition-all"
+                      >
+                        {social}
+                      </motion.a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Background Accent */}
+              <div className="absolute -bottom-10 -right-10 opacity-[0.03] pointer-events-none select-none">
+                <span className="font-universo font-black text-[60vw] leading-none">V</span>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </section>

@@ -24,7 +24,8 @@ function ProjectCursor({ active, text = "VIEW" }) {
           x: e.clientX,
           y: e.clientY,
           duration: 0.6,
-          ease: "power3.out"
+          ease: "power3.out",
+          overwrite: true
         })
       }
     }
@@ -35,7 +36,7 @@ function ProjectCursor({ active, text = "VIEW" }) {
   return (
     <div
       ref={cursorRef}
-      className={`fixed top-0 left-0 pointer-events-none z-[9999] flex items-center justify-center rounded-full transition-all duration-500 ease-out mix-blend-difference ${
+      className={`fixed top-0 left-0 pointer-events-none z-[9999] hidden lg:flex items-center justify-center rounded-full transition-all duration-500 ease-out mix-blend-difference ${
         active ? "opacity-100 scale-100" : "opacity-0 scale-0"
       }`}
       style={{
@@ -180,11 +181,11 @@ function ProjectCard({ project, index, span, onHover }) {
   }
 
   const handleMouseEnter = () => {
-    if (isDesktop) onHover(true)
+    onHover(true)
   }
 
   const handleMouseLeave = () => {
-    if (isDesktop) onHover(false)
+    onHover(false)
     if (!innerRef.current) return
     gsap.to(innerRef.current, {
       rotateX: 0,
