@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from "framer-motion"
-import { Menu, X, Github, Linkedin, Instagram, Mail } from "lucide-react"
+import { Menu, X, Github, Linkedin, Instagram, Mail, ArrowUpRight } from "lucide-react"
 
 const NAV_LINKS = ["Work", "About", "Skills", "Contact"]
 
@@ -21,6 +21,26 @@ const MenuFooterLink = ({ title, href, icon: Icon, delay }) => (
   </motion.a>
 )
 
+const HamburgerIcon = ({ isOpen, onClick }) => (
+  <button 
+    onClick={onClick}
+    className="relative z-[9999] w-12 h-12 flex flex-col items-center justify-center gap-[6px] group focus:outline-none"
+  >
+    <motion.div 
+      animate={isOpen ? { rotate: 45, y: 8, width: "24px" } : { rotate: 0, y: 0, width: "32px" }}
+      className="h-[2px] bg-[#1A1814] origin-center transition-all duration-500"
+    />
+    <motion.div 
+      animate={isOpen ? { opacity: 0, x: 20 } : { opacity: 1, x: 0 }}
+      className="h-[2px] w-[20px] bg-[#1A1814] self-end transition-all duration-500"
+    />
+    <motion.div 
+      animate={isOpen ? { rotate: -45, y: -8, width: "24px" } : { rotate: 0, y: 0, width: "28px" }}
+      className="h-[2px] bg-[#1A1814] origin-center transition-all duration-500"
+    />
+  </button>
+)
+
 export default function Navigation({ activeSection }) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -29,7 +49,7 @@ export default function Navigation({ activeSection }) {
   
   const logoOpacity = useTransform(scrollY, [200, 300], [0, 1])
   const logoY = useTransform(scrollY, [200, 300], [10, 0])
-
+ 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50)
     window.addEventListener("scroll", onScroll, { passive: true })
@@ -44,23 +64,23 @@ export default function Navigation({ activeSection }) {
 
   const menuVariants = {
     initial: { 
-      clipPath: "inset(0% 0% 100% 0%)",
-      opacity: 0 
+      x: "100%",
+      skewX: "5deg",
     },
     animate: { 
-      clipPath: "inset(0% 0% 0% 0%)",
-      opacity: 1,
+      x: 0,
+      skewX: 0,
       transition: { 
-        duration: 0.8, 
-        ease: [0.76, 0, 0.24, 1] 
+        duration: 0.9, 
+        ease: [0.16, 1, 0.3, 1] 
       }
     },
     exit: { 
-      clipPath: "inset(100% 0% 0% 0%)",
-      opacity: 0,
+      x: "100%",
+      skewX: "-5deg",
       transition: { 
-        duration: 0.6, 
-        ease: [0.76, 0, 0.24, 1] 
+        duration: 0.7, 
+        ease: [0.16, 1, 0.3, 1] 
       }
     }
   }
@@ -80,7 +100,7 @@ export default function Navigation({ activeSection }) {
       >
         <motion.button
           onClick={() => scrollTo("hero")}
-          className="font-manrope text-[#1A1814] tracking-tight"
+          className="font-universo text-[#1A1814] tracking-tight"
           style={{ fontSize: "20px", fontWeight: 900, background: "none", border: "none", cursor: "pointer", opacity: logoOpacity, y: logoY, letterSpacing: "-0.04em" }}
         >
           VIKRAM
@@ -104,87 +124,114 @@ export default function Navigation({ activeSection }) {
           })}
         </div>
 
-        <button className="md:hidden text-[#1A1814] p-2" onClick={() => setMobileOpen(true)}>
-          <div className="flex flex-col gap-1.5 w-6">
-            <div className="h-0.5 w-full bg-current" />
-            <div className="h-0.5 w-full bg-current" />
-          </div>
-        </button>
+        <div className="md:hidden">
+          <HamburgerIcon isOpen={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)} />
+        </div>
       </nav>
 
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            className="fixed inset-0 z-[9998] flex flex-col bg-[#FAF8F4] overflow-y-auto"
-            variants={menuVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            {/* Inner Wrapper to handle flex and spacing correctly */}
-            <div className="flex flex-col min-h-full p-8 md:p-20">
-              {/* Header */}
-              <div className="flex justify-between items-center mb-10">
-                <span className="font-manrope font-black text-lg tracking-tighter">VIKRAM</span>
-                <button className="w-12 h-12 flex items-center justify-center rounded-full bg-black/5" onClick={() => setMobileOpen(false)}>
-                  <X size={24} />
-                </button>
-              </div>
+          <>
+            {/* Dark Backdrop Overlay */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 bg-black/20 z-[9997] backdrop-blur-sm"
+            />
+            
+            <motion.div
+              className="fixed top-0 right-0 bottom-0 w-full md:w-[60vw] z-[9998] flex flex-col bg-[#FAF8F4] shadow-2xl"
+              variants={menuVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <div className="flex flex-col h-full p-8 md:p-24 relative overflow-hidden">
+                {/* Side Label */}
+                <div className="absolute top-1/2 -left-20 -translate-y-1/2 rotate-90 hidden md:block">
+                  <span className="font-dm-sans text-[10px] font-black uppercase tracking-[0.5em] opacity-10">NAVIGATION MENU</span>
+                </div>
 
-              {/* Primary Links - Using slightly smaller font on small mobile to ensure footer visibility */}
-              <div className="flex flex-col gap-2 md:gap-4 my-10">
-                {NAV_LINKS.map((link, i) => (
-                  <div key={link} className="overflow-hidden">
-                    <motion.button
-                      onClick={() => scrollTo(link.toLowerCase())}
-                      className="font-manrope text-[#1A1814] hover:text-portfolio-accent transition-colors uppercase text-left"
-                      style={{ fontSize: "clamp(48px, 12vw, 96px)", fontWeight: 900, background: "none", border: "none", cursor: "pointer", letterSpacing: "-0.04em", lineHeight: 1 }}
-                      initial={{ y: "100%" }}
-                      animate={{ y: 0 }}
-                      transition={{ delay: 0.3 + i * 0.1, duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+                <div className="flex flex-col gap-2 mt-20">
+                  <span className="font-dm-sans text-[10px] font-black uppercase tracking-[0.3em] text-[#1A1814]/30 mb-6">Menu Selection</span>
+                  
+                  {NAV_LINKS.map((link, i) => (
+                    <div key={link} className="flex items-center group overflow-hidden">
+                      <motion.button
+                        onClick={() => scrollTo(link.toLowerCase())}
+                        className="flex items-center gap-6 text-[#1A1814] hover:text-portfolio-accent transition-all duration-500 uppercase text-left relative"
+                        style={{ 
+                          fontSize: "clamp(42px, 10vw, 84px)", 
+                          fontWeight: 900, 
+                          background: "none", 
+                          border: "none", 
+                          cursor: "pointer", 
+                          letterSpacing: "-0.04em", 
+                          lineHeight: 1,
+                          fontFamily: "var(--font-universo)"
+                        }}
+                      >
+                        <span className="relative block overflow-hidden">
+                          <motion.span
+                            className="block"
+                            initial={{ y: "100%" }}
+                            animate={{ y: 0 }}
+                            transition={{ 
+                              delay: 0.2 + i * 0.1, 
+                              duration: 0.8, 
+                              ease: [0.16, 1, 0.3, 1] 
+                            }}
+                          >
+                            {link}
+                          </motion.span>
+                        </span>
+                        
+                        <motion.div 
+                          className="opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0"
+                          initial={{ opacity: 0, x: -20, rotate: 0 }}
+                          animate={{ opacity: 0.4, x: 0, rotate: 0 }}
+                          transition={{ delay: 0.5 + i * 0.1 }}
+                        >
+                          <ArrowUpRight size={window.innerWidth < 768 ? 24 : 40} strokeWidth={4} />
+                        </motion.div>
+                      </motion.button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-auto pt-12 border-t border-black/5 grid grid-cols-1 md:grid-cols-2 gap-12">
+                  <div className="space-y-6">
+                    <motion.div 
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.7 }}
                     >
-                      {link}
-                    </motion.button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Mobile Menu Footer - Now using flex-1 push logic */}
-              <div className="mt-auto pt-10 border-t border-black/5 flex flex-col gap-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div className="space-y-4">
-                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="font-dm-sans text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
-                      Contact
-                    </motion.p>
-                    <motion.a href="mailto:vikram517879@gmail.com" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }} className="block font-manrope text-lg md:text-xl font-bold">
-                      vikram517879@gmail.com
-                    </motion.a>
+                      <p className="font-dm-sans text-[10px] font-black uppercase tracking-[0.3em] opacity-30 mb-4">Inquiries</p>
+                      <a href="mailto:vikram517879@gmail.com" className="font-manrope text-xl font-bold hover:text-portfolio-accent transition-colors">
+                        vikram517879@gmail.com
+                      </a>
+                    </motion.div>
                   </div>
 
-                  <div className="space-y-4">
-                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="font-dm-sans text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
-                      Connect
-                    </motion.p>
-                    <div className="flex flex-wrap gap-x-8 gap-y-4">
-                      <MenuFooterLink title="Linkedin" href="https://www.linkedin.com/in/vsvikram18/" icon={Linkedin} delay={1.1} />
-                      <MenuFooterLink title="Github" href="https://github.com/vikramvicky-1" icon={Github} delay={1.2} />
-                      <MenuFooterLink title="Instagram" href="https://www.instagram.com/__vikram.vicky__" icon={Instagram} delay={1.3} />
+                  <div className="space-y-6">
+                    <p className="font-dm-sans text-[10px] font-black uppercase tracking-[0.3em] opacity-30 mb-4">Connect</p>
+                    <div className="flex flex-col gap-4">
+                      <MenuFooterLink title="Linkedin" href="https://www.linkedin.com/in/vsvikram18/" icon={Linkedin} delay={0.8} />
+                      <MenuFooterLink title="Github" href="https://github.com/vikramvicky-1" icon={Github} delay={0.9} />
+                      <MenuFooterLink title="Instagram" href="https://www.instagram.com/__vikram.vicky__" icon={Instagram} delay={1.0} />
                     </div>
                   </div>
                 </div>
-                
-                {/* Copyright info inside menu for completeness */}
-                <div className="mt-4 pt-4 border-t border-black/[0.03]">
-                  <span className="font-dm-sans text-[9px] font-bold opacity-30 uppercase tracking-widest">© 2025 Vikram Edition</span>
+
+                {/* Aesthetic Background Letter */}
+                <div className="absolute -bottom-10 -right-10 opacity-[0.03] pointer-events-none select-none">
+                  <span className="font-universo font-black text-[60vw] leading-none">V</span>
                 </div>
               </div>
-
-              {/* Watermark */}
-              <div className="absolute bottom-0 right-0 p-10 opacity-[0.02] pointer-events-none select-none">
-                <span className="font-manrope font-black text-[40vw] leading-none">V</span>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>

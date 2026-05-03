@@ -97,6 +97,7 @@
   --font-playfair: var(--font-playfair), 'Playfair Display', Georgia, serif;
   --font-manrope: var(--manrope-font), 'Manrope', sans-serif;
   --font-mosvita: 'Mosvita', local('Mosvita'), 'DM Sans', sans-serif;
+  --font-universo: 'Universo', var(--font-syncopate), 'Syncopate', sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -143,6 +144,9 @@
 }
 
 @layer base {
+  .font-universo {
+    font-family: var(--font-universo);
+  }
   * {
     @apply border-border outline-ring/50;
     box-sizing: border-box;

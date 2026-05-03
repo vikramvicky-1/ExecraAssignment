@@ -181,7 +181,7 @@ function OrbitDisplay({ techs }) {
           position: "relative",
         }}
       >
-        <span className="font-dm-mono text-[#6B6560]" style={{ fontSize: "11px", letterSpacing: "0.1em" }}>VIKRAM</span>
+        <span className="font-universo text-[#6B6560]" style={{ fontSize: "11px", letterSpacing: "0.1em" }}>VIKRAM</span>
         <span className="font-dm-mono text-[#B8B3AC]" style={{ fontSize: "9px", letterSpacing: "0.1em", marginTop: "2px" }}>STACK</span>
       </div>
     </div>
@@ -206,9 +206,9 @@ function SectionHeading({ label, title }) {
       </motion.p>
       <div className="flex flex-col">
         {titleArray.map((line, i) => (
-          <motion.h2
+          <h2
             key={i}
-            className="font-manrope text-[#1A1814] uppercase"
+            className="font-universo text-[#1A1814] uppercase gsap-reveal-text"
             style={{ 
               fontSize: "clamp(64px, 9vw, 130px)", 
               fontWeight: 900, 
@@ -216,13 +216,9 @@ function SectionHeading({ label, title }) {
               letterSpacing: "-0.05em",
               display: "block"
             }}
-            initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: i * 0.1, ease: [0.215, 0.61, 0.355, 1] }}
           >
             {line}
-          </motion.h2>
+          </h2>
         ))}
       </div>
     </div>

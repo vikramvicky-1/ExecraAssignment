@@ -115,7 +115,7 @@ export default function LoadingScreen({ onComplete }) {
             initial={{ opacity: 0, y: 40 }}
             animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
             transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            className="font-manrope font-black uppercase text-[#1A1814] select-none tracking-[-0.05em] text-center"
+            className="font-universo font-black uppercase text-[#1A1814] select-none tracking-[-0.05em] text-center"
             style={{ fontSize: "clamp(60px, 15vw, 240px)" }}
           >
             VIKRAM
@@ -127,7 +127,7 @@ export default function LoadingScreen({ onComplete }) {
             initial={{ opacity: 0, y: 20 }}
             animate={showContent ? { opacity: 0.6, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="font-manrope font-bold uppercase text-[#1A1814] tracking-[0.4em] text-[10px] md:text-[14px] mt-2 md:mt-4"
+            className="font-universo font-bold uppercase text-[#1A1814] tracking-[0.4em] text-[10px] md:text-[14px] mt-2 md:mt-4"
           >
             Full Stack Engineer
           </motion.p>
@@ -156,7 +156,7 @@ export default function LoadingScreen({ onComplete }) {
             exit={{ opacity: 0 }}
             className="fixed bottom-8 right-8 md:bottom-12 md:right-12"
           >
-            <p className="font-manrope font-black text-[10px] md:text-[12px] uppercase tracking-[0.3em] text-[#1A1814]/30 flex items-center gap-3">
+            <p className="font-universo font-black text-[10px] md:text-[12px] uppercase tracking-[0.3em] text-[#1A1814]/30 flex items-center gap-3">
               Initializing System
               <motion.span 
                 animate={{ opacity: [1, 0.3, 1] }} 

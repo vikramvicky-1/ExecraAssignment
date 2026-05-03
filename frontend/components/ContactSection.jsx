@@ -172,15 +172,11 @@ export default function ContactSection() {
           HAVE AN IDEA?? — LET&apos;S TALK
         </motion.p>
 
-        <motion.h2 
-          className="font-manrope font-black text-[12vw] leading-none tracking-[-0.05em] text-[#1A1814] uppercase"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        <h2 
+          className="font-universo font-black text-[12vw] leading-none tracking-[-0.05em] text-[#1A1814] uppercase gsap-reveal-text"
         >
           CONTACT
-        </motion.h2>
+        </h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mt-20">
           <div className="lg:col-span-5">
@@ -355,17 +351,15 @@ export default function ContactSection() {
           </div>
         </div>
 
-        <div className="mt-40 pt-10 border-t border-white/10 flex items-end justify-between relative z-10">
+        <div className="mt-40 pt-10 border-t border-white/10 flex flex-col items-center justify-center gap-2 relative z-10">
           <motion.h2 
-            className="font-manrope font-black text-[20vw] leading-[0.7] tracking-[-0.08em] opacity-10 pointer-events-none select-none absolute -bottom-[5vw] -left-[2vw]"
+            className="font-universo font-black text-[20vw] leading-[0.7] tracking-[-0.08em] opacity-10 pointer-events-none select-none absolute -bottom-[5vw] left-1/2 -translate-x-1/2"
           >
             VIKRAM
           </motion.h2>
           
-          <div className="ml-auto flex flex-col items-end gap-2">
-             <span className="font-manrope text-[10px] font-black tracking-widest opacity-60 uppercase">© 2025 ALL RIGHTS RESERVED</span>
-             <span className="font-manrope text-sm md:text-base font-black tracking-tighter">Vikram — Portfolio Edition 2.0</span>
-          </div>
+          <span className="font-manrope text-[10px] font-black tracking-widest opacity-60 uppercase">© 2025 ALL RIGHTS RESERVED</span>
+          <span className="font-manrope text-sm md:text-base font-black tracking-tighter">Vikram — Portfolio Edition 2.0</span>
         </div>
 
         <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-white opacity-[0.03] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />

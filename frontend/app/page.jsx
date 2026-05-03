@@ -114,21 +114,60 @@ export default function Portfolio() {
     const scrubUpElements = document.querySelectorAll('.gsap-scrub-up')
     scrubUpElements.forEach((el) => {
       gsap.fromTo(el, 
-        { y: 150, opacity: 0 },
+        { y: 80, opacity: 0 },
         { 
           y: 0, 
           opacity: 1,
+          duration: 1.2,
+          ease: "power4.out",
           scrollTrigger: {
             trigger: el,
-            start: "top bottom-=5%",
-            end: "top center+=20%",
-            scrub: 1.2,
+            start: "top bottom-=10%",
+            toggleActions: "play none none reverse",
           }
         }
       )
     })
 
-    // Parallax Effects
+    // Manual Split Text Reveal
+    const revealElements = document.querySelectorAll('.gsap-reveal-text')
+    revealElements.forEach((el) => {
+      const text = el.innerText
+      el.innerHTML = ''
+      
+      const words = text.split(' ')
+      words.forEach((word, i) => {
+        const wrapper = document.createElement('span')
+        wrapper.style.display = 'inline-block'
+        wrapper.style.overflow = 'hidden'
+        wrapper.style.verticalAlign = 'top'
+        
+        const inner = document.createElement('span')
+        inner.innerText = word + (i === words.length - 1 ? '' : '\u00A0')
+        inner.style.display = 'inline-block'
+        inner.classList.add('reveal-inner')
+        
+        wrapper.appendChild(inner)
+        el.appendChild(wrapper)
+      })
+
+      gsap.fromTo(el.querySelectorAll('.reveal-inner'),
+        { y: '100%' },
+        {
+          y: '0%',
+          duration: 1,
+          ease: "power4.out",
+          stagger: 0.05,
+          scrollTrigger: {
+            trigger: el,
+            start: "top bottom-=15%",
+            toggleActions: "play none none reverse",
+          }
+        }
+      )
+    })
+
+    // Parallax Effects with Smoothness
     const parallaxElements = document.querySelectorAll('.gsap-parallax')
     parallaxElements.forEach((el) => {
       const speed = el.dataset.speed || 100
@@ -139,7 +178,7 @@ export default function Portfolio() {
           trigger: el,
           start: "top bottom",
           end: "bottom top",
-          scrub: true
+          scrub: 0.5, // Faster but smooth scrub
         }
       })
     })

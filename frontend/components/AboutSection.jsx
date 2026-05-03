@@ -60,9 +60,9 @@ function SectionHeading({ label, title }) {
       </motion.p>
       <div className="flex flex-col">
         {titleArray.map((line, i) => (
-          <motion.h2
+          <h2
             key={i}
-            className="font-manrope text-[#1A1814] uppercase"
+            className="font-universo text-[#1A1814] uppercase gsap-reveal-text"
             style={{ 
               fontSize: "clamp(64px, 9vw, 130px)", 
               fontWeight: 900, 
@@ -70,13 +70,9 @@ function SectionHeading({ label, title }) {
               letterSpacing: "-0.05em",
               display: "block"
             }}
-            initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: i * 0.1, ease: [0.215, 0.61, 0.355, 1] }}
           >
             {line}
-          </motion.h2>
+          </h2>
         ))}
       </div>
     </div>
@@ -117,14 +113,14 @@ export default function AboutSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 mt-24 items-start">
           {/* Left: Manifesto */}
-          <div className="space-y-12 gsap-scrub-up">
+          <div className="space-y-12 gsap-parallax" data-speed="40">
             {manifesto.map((paragraph, i) => (
               <WordReveal key={i} text={paragraph} />
             ))}
           </div>
 
           {/* Right: Milestones */}
-          <div className="lg:pl-12 space-y-16 gsap-scrub-up">
+          <div className="lg:pl-12 space-y-16 gsap-parallax" data-speed="80">
             <div className="space-y-4">
               <h3 className="font-playfair text-3xl italic text-[#1A1814]">The Milestones</h3>
               <div className="w-12 h-[1px] bg-portfolio-accent" />
